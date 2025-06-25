@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brain Cohen's d Visualizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        #container {
+            display: flex;
+            height: 100vh;
+        }
+
+        #sidebar {
+            width: 320px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 2px solid #333;
+        }
+
+        #canvas-container {
+            flex: 1;
+            position: relative;
+        }
+
+        .section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section h3 {
+            color: #4fc3f7;
+            margin-bottom: 15px;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            background: #333;
+            border: 2px dashed #666;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        input[type="file"]:hover {
+            border-color: #4fc3f7;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            margin: 0;
+        }
+
+        button {
+            background: linear-gradient(45deg, #4fc3f7, #29b6f6);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px 5px 5px 0;
+            transition: transform 0.2s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .stat-item {
+            background: rgba(79, 195, 247, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4fc3f7;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        #colorbar {
+            width: 100%;
+            height: 30px;
+            border-radius: 5px;
+            margin: 10px 0;
+            position: relative;
+            border: 1px solid #666;
+        }
+
+        .colorbar-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .range-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .info-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            max-width: 300px;
+            display: none;
+        }
+
+        .info-panel.visible {
+            display: block;
+        }
+
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .demo-note {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid rgba(255, 193, 7, 0.5);
+            color: #ffc107;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
+        select {
+            width: 100%;
+            padding: 8px;
+            background: #333;
+            border: 1px solid #666;
+            border-radius: 5px;
+            color: white;
+            margin: 5px 0;
+        }
+
+        .github-link {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 12px;
+            border: 1px solid #666;
+        }
+
+        .github-link:hover {
+            background: rgba(0, 0, 0, 0.9);
+            color: #4fc3f7;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="sidebar">
+            <h2 style="color: #4fc3f7; text-align: center; margin-bottom: 20px; font-size: 18px;">Brain Cohen's d Visualizer</h2>
+            
+            <div class="demo-note">
+                <strong>Demo Mode:</strong> Upload a CSV with columns "Structure" and "Cohen_d" to see real data visualization. For real brain meshes, upload OBJ files (recommended) or PLY files to the /meshes/ folder and enable "Use Real Brain Meshes".
+            </div>
+
+            <div class="section">
+                <h3>📁 Data Upload</h3>
+                <input type="file" id="csvFile" accept=".csv" />
+                <div style="margin-top: 10px; font-size: 12px; opacity: 0.7;">
+                    Expected format: CSV with "Structure" and "Cohen_d" columns
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>🧠 View Selection</h3>
+                <div class="button-group">
+                    <button id="corticalBtn" class="active">Cortical</button>
+                    <button id="subcorticalBtn">Subcortical</button>
+                    <button id="bothBtn">Both</button>
+                </div>
+                
+                <select id="atlasSelect">
+                    <option value="desikan">Desikan-Killiany Atlas</option>
+                    <option value="destrieux">Destrieux Atlas</option>
+                    <option value="dkt">DKT Atlas</option>
+                </select>
+            </div>
+
+            <div class="section">
+                <h3>🎨 Color Mapping</h3>
+                <div id="colorbar"></div>
+                <div class="colorbar-label">
+                    <span id="minLabel">-2.0</span>
+                    <span>Cohen's d</span>
+                    <span id="maxLabel">2.0</span>
+                </div>
+                
+                <div class="range-controls">
+                    <label>Min:</label>
+                    <input type="number" id="minRange" value="-2.0" step="0.1" />
+                    <label>Max:</label>
+                    <input type="number" id="maxRange" value="2.0" step="0.1" />
+                </div>
+                
+                <button onclick="updateColorMapping()">Update Range</button>
+                <button onclick="autoRange()">Auto Range</button>
+            </div>
+
+            <div class="section">
+                <h3>📊 Data Statistics</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="validCount">0</div>
+                        <div class="stat-label">Valid Values</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="nanCount">0</div>
+                        <div class="stat-label">NaN Values</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalCount">0</div>
+                        <div class="stat-label">Total Structures</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="meanCohen">0.00</div>
+                        <div class="stat-label">Mean Cohen's d</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>⚙️ Display Options</h3>
+                <div class="button-group">
+                    <button onclick="toggleWireframe()">Wireframe</button>
+                    <button onclick="resetView()">Reset View</button>
+                    <button onclick="toggleInfo()">Show Info</button>
+                </div>
+                
+                <div style="margin-top: 15px;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="useRealMeshes" onchange="toggleMeshMode()" />
+                        <span>Use Real Brain Meshes</span>
+                    </label>
+                    <div style="font-size: 11px; opacity: 0.7; margin-top: 5px;">
+                        Requires Brain for Blender mesh files in /meshes/ folder
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="canvas-container">
+            <div id="loading">Loading brain data...</div>
+            <div id="info-panel" class="info-panel">
+                <h4>Interaction Guide</h4>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Mouse drag: Rotate view</li>
+                    <li>Scroll: Zoom in/out</li>
+                    <li>Click structure: Show details</li>
+                </ul>
+                <div id="structure-info"></div>
+            </div>
+        </div>
+    </div>
+
+    <a href="#" class="github-link" onclick="showGithubInstructions()">📁 GitHub Setup Guide</a>
+
+    <!-- Include required libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    
+    <!-- Three.js loaders with fallback -->
+    <script>
+        // Try to load OBJLoader from multiple CDNs
+        function loadScript(src, callback, fallback) {
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = callback;
+            script.onerror = fallback || function() {
+                console.warn('Failed to load script:', src);
+            };
+            document.head.appendChild(script);
+        }
+
+        // Load OBJLoader with fallback
+        loadScript(
+            'https://unpkg.com/three@0.128.0/examples/js/loaders/OBJLoader.js',
+            function() { console.log('OBJLoader loaded successfully'); },
+            function() {
+                loadScript(
+                    'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js',
+                    function() { console.log('OBJLoader loaded from fallback CDN'); },
+                    function() { console.warn('Could not load OBJLoader from any CDN'); }
+                );
+            }
+        );
+
+        // Load PLYLoader with fallback (optional)
+        loadScript(
+            'https://unpkg.com/three@0.128.0/examples/js/loaders/PLYLoader.js',
+            function() { console.log('PLYLoader loaded successfully'); },
+            function() {
+                loadScript(
+                    'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/PLYLoader.js',
+                    function() { console.log('PLYLoader loaded from fallback CDN'); },
+                    function() { console.warn('PLYLoader not available - will use OBJ files only'); }
+                );
+            }
+        );
+    </script>
+
+    <script>
+        // Global variables
+        let scene, camera, renderer, raycaster, mouse;
+        let brainMeshes = [];
+        let currentData = {};
+        let colorMapping = { min: -2.0, max: 2.0 };
+        let isWireframe = false;
+        let currentView = 'cortical';
+        let currentAtlas = 'desikan';
+        let useRealMeshes = false;
+        let meshLoadingPromises = new Map();
+
+        // Brain structure definitions for different atlases
+        const brainAtlases = {
+            desikan: {
+                cortical: [
+                    'lh_bankssts', 'rh_bankssts', 'lh_caudalanteriorcingulate', 'rh_caudalanteriorcingulate',
+                    'lh_caudalmiddlefrontal', 'rh_caudalmiddlefrontal', 'lh_cuneus', 'rh_cuneus',
+                    'lh_entorhinal', 'rh_entorhinal', 'lh_fusiform', 'rh_fusiform',
+                    'lh_inferiorparietal', 'rh_inferiorparietal', 'lh_inferiortemporal', 'rh_inferiortemporal',
+                    'lh_isthmuscingulate', 'rh_isthmuscingulate', 'lh_lateraloccipital', 'rh_lateraloccipital',
+                    'lh_lateralorbitofrontal', 'rh_lateralorbitofrontal', 'lh_lingual', 'rh_lingual',
+                    'lh_medialorbitofrontal', 'rh_medialorbitofrontal', 'lh_middletemporal', 'rh_middletemporal',
+                    'lh_parahippocampal', 'rh_parahippocampal', 'lh_paracentral', 'rh_paracentral',
+                    'lh_parsopercularis', 'rh_parsopercularis', 'lh_parsorbitalis', 'rh_parsorbitalis',
+                    'lh_parstriangularis', 'rh_parstriangularis', 'lh_pericalcarine', 'rh_pericalcarine',
+                    'lh_postcentral', 'rh_postcentral', 'lh_posteriorcingulate', 'rh_posteriorcingulate',
+                    'lh_precentral', 'rh_precentral', 'lh_precuneus', 'rh_precuneus',
+                    'lh_rostralanteriorcingulate', 'rh_rostralanteriorcingulate',
+                    'lh_rostralmiddlefrontal', 'rh_rostralmiddlefrontal', 'lh_superiorfrontal', 'rh_superiorfrontal',
+                    'lh_superiorparietal', 'rh_superiorparietal', 'lh_superiortemporal', 'rh_superiortemporal',
+                    'lh_supramarginal', 'rh_supramarginal', 'lh_frontalpole', 'rh_frontalpole',
+                    'lh_temporalpole', 'rh_temporalpole', 'lh_transversetemporal', 'rh_transversetemporal',
+                    'lh_insula', 'rh_insula'
+                ],
+                subcortical: [
+                    'Left-Lateral-Ventricle', 'Right-Lateral-Ventricle', 'Left-Inf-Lat-Vent', 'Right-Inf-Lat-Vent',
+                    'Left-Cerebellum-White-Matter', 'Right-Cerebellum-White-Matter', 'Left-Cerebellum-Cortex', 'Right-Cerebellum-Cortex',
+                    'Left-Thalamus', 'Right-Thalamus', 'Left-Caudate', 'Right-Caudate',
+                    'Left-Putamen', 'Right-Putamen', 'Left-Pallidum', 'Right-Pallidum',
+                    'Left-Hippocampus', 'Right-Hippocampus', 'Left-Amygdala', 'Right-Amygdala',
+                    'Left-Accumbens-area', 'Right-Accumbens-area', 'Left-VentralDC', 'Right-VentralDC'
+                ]
+            },
+            destrieux: {
+                cortical: [
+                    'lh_G_and_S_frontomargin', 'rh_G_and_S_frontomargin', 'lh_G_and_S_occipital_inf', 'rh_G_and_S_occipital_inf',
+                    'lh_G_and_S_paracentral', 'rh_G_and_S_paracentral', 'lh_G_and_S_subcentral', 'rh_G_and_S_subcentral',
+                    'lh_G_and_S_transv_frontopol', 'rh_G_and_S_transv_frontopol', 'lh_G_and_S_cingul-Ant', 'rh_G_and_S_cingul-Ant',
+                    'lh_G_and_S_cingul-Mid-Ant', 'rh_G_and_S_cingul-Mid-Ant', 'lh_G_and_S_cingul-Mid-Post', 'rh_G_and_S_cingul-Mid-Post'
+                ],
+                subcortical: [
+                    'Left-Thalamus', 'Right-Thalamus', 'Left-Caudate', 'Right-Caudate',
+                    'Left-Putamen', 'Right-Putamen', 'Left-Pallidum', 'Right-Pallidum',
+                    'Left-Hippocampus', 'Right-Hippocampus', 'Left-Amygdala', 'Right-Amygdala'
+                ]
+            },
+            dkt: {
+                cortical: [
+                    'lh_caudalanteriorcingulate', 'rh_caudalanteriorcingulate', 'lh_caudalmiddlefrontal', 'rh_caudalmiddlefrontal',
+                    'lh_cuneus', 'rh_cuneus', 'lh_entorhinal', 'rh_entorhinal', 'lh_fusiform', 'rh_fusiform',
+                    'lh_inferiorparietal', 'rh_inferiorparietal', 'lh_inferiortemporal', 'rh_inferiortemporal',
+                    'lh_isthmuscingulate', 'rh_isthmuscingulate', 'lh_lateraloccipital', 'rh_lateraloccipital'
+                ],
+                subcortical: [
+                    'Left-Thalamus', 'Right-Thalamus', 'Left-Caudate', 'Right-Caudate',
+                    'Left-Putamen', 'Right-Putamen', 'Left-Hippocampus', 'Right-Hippocampus',
+                    'Left-Amygdala', 'Right-Amygdala'
+                ]
+            }
+        };
+
+        // Demo data for testing
+        const demoData = {
+            'lh_bankssts': { cohen_d: 1.5, hemisphere: 'left', type: 'cortical' },
+            'rh_bankssts': { cohen_d: -0.8, hemisphere: 'right', type: 'cortical' },
+            'lh_superiorfrontal': { cohen_d: 2.1, hemisphere: 'left', type: 'cortical' },
+            'rh_superiorfrontal': { cohen_d: 1.2, hemisphere: 'right', type: 'cortical' },
+            'Left-Hippocampus': { cohen_d: -1.8, hemisphere: 'left', type: 'subcortical' },
+            'Right-Hippocampus': { cohen_d: -1.5, hemisphere: 'right', type: 'subcortical' },
+            'Left-Amygdala': { cohen_d: 0.9, hemisphere: 'left', type: 'subcortical' },
+            'Right-Amygdala': { cohen_d: 1.1, hemisphere: 'right', type: 'subcortical' },
+            'Left-Thalamus': { cohen_d: NaN, hemisphere: 'left', type: 'subcortical' },
+            'Right-Thalamus': { cohen_d: 0.3, hemisphere: 'right', type: 'subcortical' }
+        };
+
+        // Initialize the application
+        function init() {
+            // Check loader availability
+            // checkLoaderAvailability();
+            
+            setupScene();
+            setupControls();
+            setupEventListeners();
+            loadDemoData();
+            createBrainVisualization();
+            animate();
+        }
+
+        function checkLoaderAvailability() {
+            const objAvailable = typeof THREE.OBJLoader !== 'undefined';
+            const plyAvailable = typeof THREE.PLYLoader !== 'undefined';
+            
+            console.log('Loader availability:');
+            console.log('- OBJLoader:', objAvailable ? 'Available' : 'Not available');
+            console.log('- PLYLoader:', plyAvailable ? 'Available' : 'Not available');
+            
+            if (!objAvailable && !plyAvailable) {
+                console.warn('No mesh loaders available - only demo mode will work');
+                const checkbox = document.getElementById('useRealMeshes');
+                if (checkbox) {
+                    checkbox.disabled = true;
+                    checkbox.parentElement.style.opacity = '0.5';
+                    checkbox.parentElement.title = 'Mesh loaders not available';
+                }
+            } else if (!plyAvailable) {
+                console.info('PLY loader not available - will use OBJ files only');
+            }
+        }
+
+        function setupScene() {
+            // Scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x1a1a2e);
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(75, 
+                (window.innerWidth - 320) / window.innerHeight, 0.1, 1000);
+            camera.position.set(100, 50, 100);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth - 320, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(100, 100, 50);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+
+            const fillLight = new THREE.DirectionalLight(0x4080ff, 0.3);
+            fillLight.position.set(-50, -50, -50);
+            scene.add(fillLight);
+
+            // Raycaster for mouse picking
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+        }
+
+        function setupControls() {
+            let isMouseDown = false;
+            let mouseX = 0, mouseY = 0;
+            let targetRotationX = 0, targetRotationY = 0;
+            let currentRotationX = 0, currentRotationY = 0;
+            let cameraDistance = 150;
+
+            const canvas = renderer.domElement;
+
+            canvas.addEventListener('mousedown', (event) => {
+                isMouseDown = true;
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            });
+
+            canvas.addEventListener('mouseup', () => {
+                isMouseDown = false;
+            });
+
+            canvas.addEventListener('mousemove', (event) => {
+                if (isMouseDown) {
+                    targetRotationY += (event.clientX - mouseX) * 0.01;
+                    targetRotationX += (event.clientY - mouseY) * 0.01;
+                    mouseX = event.clientX;
+                    mouseY = event.clientY;
+                } else {
+                    // Update mouse position for raycasting
+                    const rect = canvas.getBoundingClientRect();
+                    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+                }
+            });
+
+            canvas.addEventListener('wheel', (event) => {
+                cameraDistance += event.deltaY * 0.1;
+                cameraDistance = Math.max(50, Math.min(300, cameraDistance));
+                event.preventDefault();
+            });
+
+            canvas.addEventListener('click', handleMouseClick);
+
+            // Smooth camera movement
+            function updateCamera() {
+                currentRotationX += (targetRotationX - currentRotationX) * 0.1;
+                currentRotationY += (targetRotationY - currentRotationY) * 0.1;
+                
+                camera.position.x = Math.sin(currentRotationY) * Math.cos(currentRotationX) * cameraDistance;
+                camera.position.y = Math.sin(currentRotationX) * cameraDistance;
+                camera.position.z = Math.cos(currentRotationY) * Math.cos(currentRotationX) * cameraDistance;
+                camera.lookAt(0, 0, 0);
+                
+                requestAnimationFrame(updateCamera);
+            }
+            updateCamera();
+        }
+
+        function setupEventListeners() {
+            document.getElementById('csvFile').addEventListener('change', handleFileUpload);
+            document.getElementById('corticalBtn').addEventListener('click', () => setView('cortical'));
+            document.getElementById('subcorticalBtn').addEventListener('click', () => setView('subcortical'));
+            document.getElementById('bothBtn').addEventListener('click', () => setView('both'));
+            document.getElementById('atlasSelect').addEventListener('change', handleAtlasChange);
+            document.getElementById('minRange').addEventListener('change', updateColorMapping);
+            document.getElementById('maxRange').addEventListener('change', updateColorMapping);
+
+            window.addEventListener('resize', handleResize);
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            document.getElementById('loading').style.display = 'block';
+
+            Papa.parse(file, {
+                header: true,
+                dynamicTyping: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    processCsvData(results.data);
+                    document.getElementById('loading').style.display = 'none';
+                },
+                error: function(error) {
+                    console.error('CSV parsing error:', error);
+                    alert('Error parsing CSV file. Please check the format.');
+                    document.getElementById('loading').style.display = 'none';
+                }
+            });
+        }
+
+        function processCsvData(data) {
+            currentData = {};
+            
+            data.forEach(row => {
+                if (row.Structure && row.hasOwnProperty('Cohen_d')) {
+                    const structure = row.Structure.trim();
+                    const cohen_d = row.Cohen_d;
+                    
+                    // Determine hemisphere and type from structure name
+                    let hemisphere = 'unknown';
+                    let type = 'cortical';
+                    
+                    if (structure.startsWith('lh_') || structure.includes('Left-')) {
+                        hemisphere = 'left';
+                    } else if (structure.startsWith('rh_') || structure.includes('Right-')) {
+                        hemisphere = 'right';
+                    }
+                    
+                    if (structure.includes('Hippocampus') || structure.includes('Amygdala') || 
+                        structure.includes('Thalamus') || structure.includes('Caudate') || 
+                        structure.includes('Putamen') || structure.includes('Pallidum')) {
+                        type = 'subcortical';
+                    }
+                    
+                    currentData[structure] = {
+                        cohen_d: cohen_d,
+                        hemisphere: hemisphere,
+                        type: type
+                    };
+                }
+            });
+
+            updateStatistics();
+            autoRange();
+            updateBrainVisualization();
+        }
+
+        function loadDemoData() {
+            currentData = demoData;
+            updateStatistics();
+            updateColorMapping();
+        }
+
+        function createBrainVisualization() {
+            if (useRealMeshes) {
+                loadRealBrainMeshes();
+            } else {
+                createDemoBrain();
+            }
+        }
+
+        async function loadRealBrainMeshes() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('loading').textContent = 'Loading brain meshes...';
+
+            // Clear existing meshes
+            clearBrainMeshes();
+
+            const atlas = brainAtlases[currentAtlas];
+            if (!atlas) {
+                console.error('Atlas not found:', currentAtlas);
+                fallbackToDemoMode();
+                return;
+            }
+
+            let loadedCount = 0;
+            let totalCount = 0;
+            const structures = [...atlas.cortical, ...atlas.subcortical];
+            totalCount = structures.length;
+
+            // Load cortical meshes
+            for (const structure of atlas.cortical) {
+                try {
+                    await loadSingleMesh(structure, 'cortical');
+                    loadedCount++;
+                    updateLoadingProgress(loadedCount, totalCount);
+                } catch (error) {
+                    console.warn(`Could not load cortical structure ${structure}:`, error);
+                }
+            }
+
+            // Load subcortical meshes
+            for (const structure of atlas.subcortical) {
+                try {
+                    await loadSingleMesh(structure, 'subcortical');
+                    loadedCount++;
+                    updateLoadingProgress(loadedCount, totalCount);
+                } catch (error) {
+                    console.warn(`Could not load subcortical structure ${structure}:`, error);
+                }
+            }
+
+            document.getElementById('loading').style.display = 'none';
+            
+            if (brainMeshes.length === 0) {
+                alert('No mesh files found. Make sure Brain for Blender mesh files are in the /meshes/ folder. Falling back to demo mode.');
+                fallbackToDemoMode();
+            } else {
+                updateBrainVisualization();
+                console.log(`Successfully loaded ${brainMeshes.length} brain structures`);
+            }
+        }
+
+        async function loadSingleMesh(structure, type) {
+            // Try different file formats and paths (prioritize OBJ format)
+            const possiblePaths = [
+                `meshes/${type}/${currentAtlas}/${structure}`,
+                `meshes/${type}/${structure}`,
+                `meshes/${currentAtlas}/${structure}`,
+                `meshes/${structure}`,
+                `${structure}`
+            ];
+
+            // Prioritize OBJ format since it's more reliable
+            const possibleFormats = ['obj', 'ply'];
+
+            for (const format of possibleFormats) {
+                // Skip PLY if loader not available
+                if (format === 'ply' && typeof THREE.PLYLoader === 'undefined') {
+                    console.warn('PLYLoader not available, skipping PLY files');
+                    continue;
+                }
+
+                for (const basePath of possiblePaths) {
+                    const path = `${basePath}.${format}`;
+                    try {
+                        const object = await loadMeshFile(path, format);
+                        if (object) {
+                            setupMeshProperties(object, structure, type);
+                            scene.add(object);
+                            console.log(`Successfully loaded ${structure} from ${path}`);
+                            return object;
+                        }
+                    } catch (error) {
+                        // Try next path/format combination
+                        continue;
+                    }
+                }
+            }
+            throw new Error(`Could not load mesh for ${structure} - no valid files found`);
+        }
+
+        function loadMeshFile(path, format) {
+            return new Promise((resolve, reject) => {
+                let loader;
+                
+                if (format === 'obj') {
+                    if (typeof THREE.OBJLoader === 'undefined') {
+                        reject(new Error('OBJLoader not available'));
+                        return;
+                    }
+                    loader = new THREE.OBJLoader();
+                } else if (format === 'ply') {
+                    if (typeof THREE.PLYLoader === 'undefined') {
+                        reject(new Error('PLYLoader not available - falling back to OBJ'));
+                        return;
+                    }
+                    loader = new THREE.PLYLoader();
+                } else {
+                    reject(new Error('Unsupported format'));
+                    return;
+                }
+
+                const onLoad = (result) => {
+                    if (format === 'ply') {
+                        // PLY loader returns geometry, need to create mesh
+                        const material = new THREE.MeshPhongMaterial({ color: 0x888888 });
+                        const mesh = new THREE.Mesh(result, material);
+                        const group = new THREE.Group();
+                        group.add(mesh);
+                        resolve(group);
+                    } else {
+                        // OBJ loader returns group/object
+                        resolve(result);
+                    }
+                };
+
+                const onProgress = (progress) => {
+                    // Optional: handle loading progress
+                };
+
+                const onError = (error) => {
+                    reject(error);
+                };
+
+                loader.load(path, onLoad, onProgress, onError);
+            });
+        }
+
+        function setupMeshProperties(object, structure, type) {
+            object.traverse((child) => {
+                if (child.isMesh) {
+                    // Set up user data
+                    child.userData = {
+                        structure: structure,
+                        type: type,
+                        cohen_d: currentData[structure]?.cohen_d || NaN,
+                        hemisphere: getHemisphere(structure)
+                    };
+                    
+                    // Apply material and color safely
+                    try {
+                        const color = getColorFromCohenD(child.userData.cohen_d);
+                        
+                        // Ensure we have a valid material
+                        if (!child.material || !child.material.isMaterial) {
+                            child.material = new THREE.MeshPhongMaterial();
+                        }
+                        
+                        // Clone material to avoid shared references
+                        child.material = child.material.clone();
+                        
+                        // Set material properties safely
+                        child.material.color.setHex(color);
+                        child.material.transparent = true;
+                        child.material.opacity = 0.8;
+                        child.material.side = THREE.DoubleSide;
+                        child.material.needsUpdate = true;
+                        
+                        // Enable shadows safely
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                        
+                        brainMeshes.push(child);
+                    } catch (error) {
+                        console.warn(`Error setting up mesh properties for ${structure}:`, error);
+                        
+                        // Fallback material
+                        child.material = new THREE.MeshPhongMaterial({
+                            color: 0x888888,
+                            transparent: true,
+                            opacity: 0.8
+                        });
+                        
+                        brainMeshes.push(child);
+                    }
+                }
+            });
+        }
+
+        function getHemisphere(structure) {
+            if (structure.startsWith('lh_') || structure.includes('Left-')) {
+                return 'left';
+            } else if (structure.startsWith('rh_') || structure.includes('Right-')) {
+                return 'right';
+            }
+            return 'unknown';
+        }
+
+        function updateLoadingProgress(loaded, total) {
+            const percentage = Math.round((loaded / total) * 100);
+            document.getElementById('loading').textContent = `Loading brain meshes... ${percentage}% (${loaded}/${total})`;
+        }
+
+        function clearBrainMeshes() {
+            brainMeshes.forEach(mesh => {
+                if (mesh.parent) {
+                    mesh.parent.remove(mesh);
+                }
+            });
+            brainMeshes = [];
+            
+            // Remove all brain-related objects from scene
+            const objectsToRemove = [];
+            scene.traverse((object) => {
+                if (object.userData && (object.userData.structure || object.userData.isBrainMesh)) {
+                    objectsToRemove.push(object);
+                }
+            });
+            objectsToRemove.forEach(obj => scene.remove(obj));
+        }
+
+        function fallbackToDemoMode() {
+            useRealMeshes = false;
+            document.getElementById('useRealMeshes').checked = false;
+            createDemoBrain();
+        }
+
+        function createDemoBrain() {
+            // Clear existing meshes
+            clearBrainMeshes();
+
+            const structurePositions = {
+                // Cortical structures
+                'lh_bankssts': { pos: [-30, 10, 20], size: 8, type: 'cortical' },
+                'rh_bankssts': { pos: [30, 10, 20], size: 8, type: 'cortical' },
+                'lh_superiorfrontal': { pos: [-25, 20, 30], size: 12, type: 'cortical' },
+                'rh_superiorfrontal': { pos: [25, 20, 30], size: 12, type: 'cortical' },
+                'lh_entorhinal': { pos: [-20, -5, 15], size: 7, type: 'cortical' },
+                'rh_entorhinal': { pos: [20, -5, 15], size: 7, type: 'cortical' },
+                'lh_fusiform': { pos: [-25, -15, 10], size: 9, type: 'cortical' },
+                'rh_fusiform': { pos: [25, -15, 10], size: 9, type: 'cortical' },
+                
+                // Subcortical structures
+                'Left-Hippocampus': { pos: [-15, -10, 0], size: 6, type: 'subcortical' },
+                'Right-Hippocampus': { pos: [15, -10, 0], size: 6, type: 'subcortical' },
+                'Left-Amygdala': { pos: [-12, -5, -10], size: 4, type: 'subcortical' },
+                'Right-Amygdala': { pos: [12, -5, -10], size: 4, type: 'subcortical' },
+                'Left-Thalamus': { pos: [-8, 0, 5], size: 5, type: 'subcortical' },
+                'Right-Thalamus': { pos: [8, 0, 5], size: 5, type: 'subcortical' },
+                'Left-Caudate': { pos: [-10, 8, 8], size: 5, type: 'subcortical' },
+                'Right-Caudate': { pos: [10, 8, 8], size: 5, type: 'subcortical' },
+                'Left-Putamen': { pos: [-12, 3, 2], size: 4, type: 'subcortical' },
+                'Right-Putamen': { pos: [12, 3, 2], size: 4, type: 'subcortical' }
+            };
+
+            // Create main brain hemispheres as background
+            try {
+                const leftHemisphere = new THREE.SphereGeometry(35, 32, 32, 0, Math.PI, 0, Math.PI);
+                const rightHemisphere = new THREE.SphereGeometry(35, 32, 32, Math.PI, Math.PI, 0, Math.PI);
+                
+                const hemisphereMateria = new THREE.MeshPhongMaterial({
+                    color: 0x444444,
+                    transparent: true,
+                    opacity: 0.15,
+                    wireframe: false
+                });
+                
+                const leftMesh = new THREE.Mesh(leftHemisphere, hemisphereMateria.clone());
+                const rightMesh = new THREE.Mesh(rightHemisphere, hemisphereMateria.clone());
+                
+                leftMesh.position.set(-5, 0, 0);
+                rightMesh.position.set(5, 0, 0);
+                leftMesh.userData = { isBrainMesh: true };
+                rightMesh.userData = { isBrainMesh: true };
+                
+                scene.add(leftMesh);
+                scene.add(rightMesh);
+            } catch (error) {
+                console.warn('Error creating brain hemispheres:', error);
+            }
+
+            // Create structure meshes
+            Object.entries(structurePositions).forEach(([structure, info]) => {
+                if (currentData[structure]) {
+                    try {
+                        // Create different shapes for different structure types
+                        let geometry;
+                        if (info.type === 'cortical') {
+                            // Slightly flattened spheres for cortical areas
+                            geometry = new THREE.SphereGeometry(info.size, 16, 16);
+                            geometry.scale(1, 0.8, 1.2);
+                        } else {
+                            // More compact shapes for subcortical structures
+                            geometry = new THREE.SphereGeometry(info.size, 12, 12);
+                        }
+                        
+                        const colorHex = getColorFromCohenD(currentData[structure].cohen_d);
+                        const material = new THREE.MeshPhongMaterial({
+                            color: colorHex,
+                            transparent: true,
+                            opacity: 0.85,
+                            shininess: 30
+                        });
+                        
+                        const mesh = new THREE.Mesh(geometry, material);
+                        mesh.position.set(...info.pos);
+                        mesh.castShadow = true;
+                        mesh.receiveShadow = true;
+                        mesh.userData = {
+                            structure: structure,
+                            cohen_d: currentData[structure].cohen_d,
+                            type: info.type,
+                            hemisphere: getHemisphere(structure)
+                        };
+                        
+                        scene.add(mesh);
+                        brainMeshes.push(mesh);
+                    } catch (error) {
+                        console.warn(`Error creating mesh for ${structure}:`, error);
+                    }
+                }
+            });
+
+            updateBrainVisualization();
+        }
+
+        function toggleMeshMode() {
+            useRealMeshes = document.getElementById('useRealMeshes').checked;
+            
+            if (useRealMeshes) {
+                // Check loader availability before proceeding
+                const objAvailable = typeof THREE.OBJLoader !== 'undefined';
+                const plyAvailable = typeof THREE.PLYLoader !== 'undefined';
+                
+                if (!objAvailable && !plyAvailable) {
+                    alert('No mesh loaders are available. Please refresh the page and ensure internet connection for CDN access.');
+                    document.getElementById('useRealMeshes').checked = false;
+                    useRealMeshes = false;
+                    return;
+                }
+                
+                let message = 'Real mesh mode enabled.\n';
+                message += 'Available formats: ';
+                if (objAvailable) message += 'OBJ ';
+                if (plyAvailable) message += 'PLY ';
+                message += '\n\nMake sure mesh files are uploaded to the /meshes/ folder.';
+                
+                console.log(message);
+            }
+            
+            createBrainVisualization();
+        }
+
+        function getColorFromCohenD(cohen_d) {
+            // Handle invalid or missing values
+            if (cohen_d === undefined || cohen_d === null || isNaN(cohen_d)) {
+                return 0x666666; // Gray for NaN/invalid values
+            }
+            
+            // Ensure cohen_d is a valid number
+            const value = parseFloat(cohen_d);
+            if (!isFinite(value)) {
+                return 0x666666;
+            }
+            
+            // Ensure colorMapping values are valid
+            const minVal = isFinite(colorMapping.min) ? colorMapping.min : -2.0;
+            const maxVal = isFinite(colorMapping.max) ? colorMapping.max : 2.0;
+            
+            // Prevent division by zero
+            const range = maxVal - minVal;
+            if (range === 0) {
+                return 0x888888; // Default gray if no range
+            }
+            
+            // Normalize value between 0 and 1
+            const normalized = (value - minVal) / range;
+            const clamped = Math.max(0, Math.min(1, normalized));
+            
+            // Create color gradient: blue (negative) -> white (zero) -> red (positive)
+            let r, g, b;
+            if (clamped < 0.5) {
+                // Blue to white
+                const t = clamped * 2;
+                r = t;
+                g = t;
+                b = 1;
+            } else {
+                // White to red
+                const t = (clamped - 0.5) * 2;
+                r = 1;
+                g = 1 - t;
+                b = 1 - t;
+            }
+            
+            // Ensure RGB values are valid
+            r = Math.max(0, Math.min(1, r));
+            g = Math.max(0, Math.min(1, g));
+            b = Math.max(0, Math.min(1, b));
+            
+            // Return as hex color
+            return (Math.floor(r * 255) << 16) | (Math.floor(g * 255) << 8) | Math.floor(b * 255);
+        }
+
+        function updateColorMapping() {
+            colorMapping.min = parseFloat(document.getElementById('minRange').value);
+            colorMapping.max = parseFloat(document.getElementById('maxRange').value);
+            
+            document.getElementById('minLabel').textContent = colorMapping.min.toFixed(1);
+            document.getElementById('maxLabel').textContent = colorMapping.max.toFixed(1);
+            
+            updateColorbar();
+            updateBrainVisualization();
+        }
+
+        function updateColorbar() {
+            try {
+                const colorbar = document.getElementById('colorbar');
+                if (!colorbar) return;
+                
+                const canvas = document.createElement('canvas');
+                canvas.width = 256;
+                canvas.height = 30;
+                const ctx = canvas.getContext('2d');
+                
+                if (!ctx) return;
+                
+                const gradient = ctx.createLinearGradient(0, 0, 256, 0);
+                gradient.addColorStop(0, '#0066cc');
+                gradient.addColorStop(0.5, '#ffffff');
+                gradient.addColorStop(1, '#cc0000');
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, 256, 30);
+                
+                colorbar.style.backgroundImage = `url(${canvas.toDataURL()})`;
+            } catch (error) {
+                console.warn('Error updating colorbar:', error);
+            }
+        }
+
+        function autoRange() {
+            const validValues = Object.values(currentData)
+                .map(d => d.cohen_d)
+                .filter(v => !isNaN(v));
+            
+            if (validValues.length === 0) return;
+            
+            const min = Math.min(...validValues);
+            const max = Math.max(...validValues);
+            const range = max - min;
+            const padding = range * 0.1;
+            
+            colorMapping.min = min - padding;
+            colorMapping.max = max + padding;
+            
+            document.getElementById('minRange').value = colorMapping.min.toFixed(1);
+            document.getElementById('maxRange').value = colorMapping.max.toFixed(1);
+            
+            updateColorMapping();
+        }
+
+        function updateStatistics() {
+            const values = Object.values(currentData).map(d => d.cohen_d);
+            const validValues = values.filter(v => !isNaN(v));
+            const nanCount = values.filter(v => isNaN(v)).length;
+            const meanCohen = validValues.length > 0 ? 
+                validValues.reduce((a, b) => a + b, 0) / validValues.length : 0;
+            
+            document.getElementById('validCount').textContent = validValues.length;
+            document.getElementById('nanCount').textContent = nanCount;
+            document.getElementById('totalCount').textContent = values.length;
+            document.getElementById('meanCohen').textContent = meanCohen.toFixed(2);
+        }
+
+        function setView(view) {
+            currentView = view;
+            
+            // Update button states
+            document.querySelectorAll('#sidebar button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(view + 'Btn').classList.add('active');
+            
+            updateBrainVisualization();
+        }
+
+        function updateBrainVisualization() {
+            brainMeshes.forEach(mesh => {
+                try {
+                    const userData = mesh.userData;
+                    if (!userData) return;
+                    
+                    let visible = false;
+                    
+                    if (currentView === 'both') {
+                        visible = true;
+                    } else if (currentView === 'cortical' && userData.type === 'cortical') {
+                        visible = true;
+                    } else if (currentView === 'subcortical' && userData.type === 'subcortical') {
+                        visible = true;
+                    }
+                    
+                    mesh.visible = visible;
+                    
+                    if (visible && mesh.material) {
+                        // Safely update color
+                        const colorHex = getColorFromCohenD(userData.cohen_d);
+                        if (mesh.material.color && typeof mesh.material.color.setHex === 'function') {
+                            mesh.material.color.setHex(colorHex);
+                        }
+                        
+                        // Update wireframe if material supports it
+                        if (mesh.material.hasOwnProperty('wireframe')) {
+                            mesh.material.wireframe = isWireframe;
+                        }
+                        
+                        // Mark material for update
+                        mesh.material.needsUpdate = true;
+                    }
+                } catch (error) {
+                    console.warn('Error updating mesh visualization:', error);
+                    // Hide problematic mesh
+                    mesh.visible = false;
+                }
+            });
+        }
+
+        function handleMouseClick(event) {
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(brainMeshes);
+            
+            if (intersects.length > 0) {
+                const mesh = intersects[0].object;
+                const userData = mesh.userData;
+                
+                const infoPanel = document.getElementById('info-panel');
+                const structureInfo = document.getElementById('structure-info');
+                
+                structureInfo.innerHTML = `
+                    <h5>Structure Details</h5>
+                    <p><strong>Name:</strong> ${userData.structure}</p>
+                    <p><strong>Cohen's d:</strong> ${isNaN(userData.cohen_d) ? 'NaN' : userData.cohen_d.toFixed(3)}</p>
+                    <p><strong>Type:</strong> ${userData.type}</p>
+                `;
+                
+                infoPanel.classList.add('visible');
+            }
+        }
+
+        function toggleWireframe() {
+            isWireframe = !isWireframe;
+            updateBrainVisualization();
+        }
+
+        function resetView() {
+            camera.position.set(100, 50, 100);
+            camera.lookAt(0, 0, 0);
+        }
+
+        function toggleInfo() {
+            const infoPanel = document.getElementById('info-panel');
+            infoPanel.classList.toggle('visible');
+        }
+
+        function handleAtlasChange() {
+            const newAtlas = document.getElementById('atlasSelect').value;
+            if (newAtlas !== currentAtlas) {
+                currentAtlas = newAtlas;
+                console.log('Atlas changed to:', currentAtlas);
+                
+                if (useRealMeshes) {
+                    // Reload meshes for new atlas
+                    loadRealBrainMeshes();
+                } else {
+                    // Demo mode doesn't change with atlas
+                    console.log('Atlas change only affects real mesh mode');
+                }
+            }
+        }
+
+        function handleResize() {
+            camera.aspect = (window.innerWidth - 320) / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth - 320, window.innerHeight);
+        }
+
+        function showGithubInstructions() {
+            alert(`GitHub Pages Setup Instructions:
+
+1. Create a new repository on GitHub
+2. Upload this HTML file as 'index.html'
+3. Go to repository Settings > Pages
+4. Select 'Deploy from a branch' and choose 'main'
+5. Your site will be available at: username.github.io/repository-name
+
+To add real brain meshes:
+1. Download Brain for Blender files from brainder.org
+2. Create folder structure:
+   /meshes/cortical/desikan/   (for cortical OBJ files - recommended)
+   /meshes/subcortical/        (for subcortical OBJ files)
+3. Upload mesh files to your repository
+4. Enable "Use Real Brain Meshes" checkbox in the app
+5. The app will automatically detect and load available files
+
+IMPORTANT: Use OBJ format for best compatibility. PLY files may cause WebGL errors.
+
+Supported file structure:
+- meshes/cortical/[atlas]/[structure].obj (recommended)
+- meshes/subcortical/[structure].obj
+- meshes/[structure].obj (fallback)
+
+The CSV file should have columns: "Structure" and "Cohen_d"
+Structure names must match the mesh filenames (without extension).
+
+Example: lh_bankssts.obj matches CSV row with Structure = "lh_bankssts"
+
+Troubleshooting:
+- If you see WebGL errors, refresh the page
+- Use OBJ format instead of PLY for better stability
+- Check browser console for detailed error messages`);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        // Add CSS for active button state
+        const style = document.createElement('style');
+        style.textContent = `
+            button.active {
+                background: linear-gradient(45deg, #ff6b6b, #ff8e53) !important;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize colorbar
+        updateColorbar();
+
+        // Start the application
+        init();
+    </script>
+</body>
+</html>
