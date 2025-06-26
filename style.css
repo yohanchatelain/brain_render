@@ -1,0 +1,325 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    overflow: hidden;
+    height: 100vh;
+}
+
+#container {
+    display: flex;
+    height: 100vh;
+}
+
+#sidebar {
+    width: 320px;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 20px;
+    overflow-y: auto;
+    border-right: 2px solid #333;
+}
+
+#canvas-container {
+    flex: 1;
+    position: relative;
+}
+
+.section {
+    margin-bottom: 25px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.section h3 {
+    color: #4fc3f7;
+    margin-bottom: 15px;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    background: #333;
+    border: 2px dashed #666;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+input[type="file"]:hover {
+    border-color: #4fc3f7;
+}
+
+input[type="range"] {
+    width: 100%;
+    margin: 10px 0;
+}
+
+input[type="checkbox"] {
+    margin-right: 8px;
+    transform: scale(1.2);
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    margin: 10px 0;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin: 0;
+}
+
+button {
+    background: linear-gradient(45deg, #4fc3f7, #29b6f6);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px 5px 5px 0;
+    transition: transform 0.2s;
+    font-weight: bold;
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+button.active {
+    background: linear-gradient(45deg, #ff6b6b, #ff8e53) !important;
+}
+
+button:disabled {
+    background: #666 !important;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.button-group {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.stat-item {
+    background: rgba(79, 195, 247, 0.2);
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 20px;
+    font-weight: bold;
+    color: #4fc3f7;
+}
+
+.stat-label {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+#colorbar {
+    width: 100%;
+    height: 30px;
+    border-radius: 5px;
+    margin: 10px 0;
+    position: relative;
+    border: 1px solid #666;
+}
+
+.colorbar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.range-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.range-controls input[type="number"] {
+    width: 70px;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.info-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    max-width: 300px;
+    display: none;
+}
+
+.info-panel.visible {
+    display: block;
+}
+
+#loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 18px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    display: none;
+}
+
+.note {
+    background: rgba(255, 193, 7, 0.2);
+    border: 1px solid rgba(255, 193, 7, 0.5);
+    color: #ffc107;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    margin-bottom: 15px;
+}
+
+select {
+    width: 100%;
+    padding: 8px;
+    background: #333;
+    border: 1px solid #666;
+    border-radius: 5px;
+    color: white;
+    margin: 5px 0;
+}
+
+.github-link {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 12px;
+    border: 1px solid #666;
+}
+
+.github-link:hover {
+    background: rgba(0, 0, 0, 0.9);
+    color: #4fc3f7;
+}
+
+.control-btn {
+    flex: 1;
+    min-width: 60px;
+    font-size: 12px;
+    padding: 8px 4px;
+    margin: 2px;
+}
+
+.control-btn.active {
+    background: linear-gradient(45deg, #4fc3f7, #29b6f6) !important;
+    color: white;
+}
+
+.control-info {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px 0;
+    font-size: 11px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.control-description {
+    line-height: 1.4;
+}
+
+.control-settings {
+    margin-top: 10px;
+}
+
+.control-settings .range-controls {
+    align-items: center;
+    gap: 8px;
+}
+
+.control-settings input[type="range"] {
+    flex: 1;
+    margin: 0;
+}
+
+#speedValue {
+    min-width: 30px;
+    font-size: 12px;
+    color: #4fc3f7;
+}
+
+/* Gallery specific styles */
+.gallery-status {
+    font-size: 11px;
+    opacity: 0.7;
+    margin-top: 10px;
+}
+
+.paper-info {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.paper-title {
+    color: #4fc3f7;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.paper-details {
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.paper-url {
+    color: #4fc3f7;
+    font-size: 11px;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+.paper-url:hover {
+    text-decoration: underline;
+}

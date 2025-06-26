@@ -1,0 +1,115 @@
+GitHub Pages Setup Instructions:
+
+1. Create a new repository on GitHub
+2. Upload this HTML file as 'index.html'
+3. Go to repository Settings > Pages
+4. Select 'Deploy from a branch' and choose 'main'
+5. Your site will be available at: username.github.io/repository-name
+
+Required Files:
+1. CSV file with "Structure" and "Cohen_d" columns
+2. Brain mesh files from Brain for Blender (brainder.org)
+3. NAVR data files for thresholding (optional)
+4. Gallery datasets (optional)
+
+File Structure:
+/meshes/cortical/desikan/   (for cortical OBJ files - recommended)
+/meshes/subcortical/        (for subcortical OBJ files)
+/meshes/[structure].obj     (fallback location)
+
+/data/desikan/              (NAVR data files for Desikan atlas)
+  navr_cortical_thickness.csv
+  navr_cortical_area.csv
+  navr_cortical_volume.csv
+  navr_subcortical_volume.csv
+/data/destrieux/            (NAVR data files for Destrieux atlas)
+/data/dkt/                  (NAVR data files for DKT atlas)
+
+Gallery Structure:
+/gallery/index.json         (required - list of all datasets)
+/gallery/{paper}/csv/{disease}_{metric}_{subgroup}_thresholded.csv
+/gallery/{paper}/desc/{disease}_{metric}_{subgroup}.json (optional - paper metadata)
+
+Gallery Index File Format (gallery/index.json):
+[
+  {
+    "file": "Hettwer_2022/csv/adhd_thickness_all_thresholded.csv",
+    "description": "Hettwer_2022/desc/adhd_thickness_all.json",
+    "disease": "adhd",
+    "metric": "thickness", 
+    "subgroup": "all",
+    "paper": "Hettwer_2022"
+  },
+  {
+    "file": "enigma/csv/schizophrenia_area_adult_thresholded.csv",
+    "description": "enigma/desc/schizophrenia_area_adult.json",
+    "disease": "schizophrenia",
+    "metric": "area",
+    "subgroup": "adult",
+    "paper": "enigma"
+  }
+]
+
+Gallery Description File Format (optional - {disease}_{metric}_{subgroup}.json):
+{
+  "title": "Coordinated cortical thickness alterations across six neurodevelopmental and psychiatric disorders",
+  "url": "https://doi.org/10.1038/s41467-022-34367-6", 
+  "authors": "M. D. Hettwer et al.",
+  "year": "2022",
+  "disease": "Attention-Deficit/Hyperactivity Disorder (ADHD)",
+  "subgroup": "adult",
+  "case-control": "ADHD vs Controls",
+  "metric": "Cortical thickness",
+  "value": "Cohen-d"
+}
+
+Gallery Navigation:
+Cascading dropdowns: Paper > Disease > Metric > Subgroup
+- Paper: Extracted from file path (e.g., "Hettwer_2022", "enigma")
+- Disease: adhd, asd, bd, mdd, ocd, scz, etc.
+- Metric: thickness, area, volume, subcortical_volume
+- Subgroup: all, adult, pediatric, etc.
+
+Example Gallery Files:
+/gallery/index.json
+/gallery/Hettwer_2022/csv/adhd_thickness_all_thresholded.csv
+/gallery/Hettwer_2022/desc/adhd_thickness_all.json
+/gallery/enigma/csv/schizophrenia_area_adult_thresholded.csv
+/gallery/enigma/desc/schizophrenia_area_adult.json
+
+NAVR File Formats:
+Cortical: region,hemisphere,NAVR,NAVR_corrected,correction,population_size
+Subcortical: region,NAVR,NAVR_corrected,correction,population_size
+
+IMPORTANT: Use OBJ format for best compatibility. PLY files may cause WebGL errors.
+
+The CSV file should have columns: "Structure" and "Cohen_d"
+Structure names must match the mesh filenames (without extension).
+
+Example: lh_bankssts.obj matches CSV row with Structure = "lh_bankssts"
+
+NAVR Thresholding:
+- Load NAVR data files for statistical thresholding
+- Cohen's d values below NAVR_corrected threshold are set to NaN
+- Toggle between thresholded and unthresholded views
+- Click structures to see NAVR values and thresholding info
+
+Gallery Features:
+- Cascading dropdown navigation (Paper > Disease > Metric > Subgroup)
+- Automatic discovery based on gallery/index.json
+- Paper metadata display with links to original articles
+- One-click dataset loading with full feature integration
+
+Camera Controls:
+- Orbit: Standard rotation around center point
+- Trackball: Free 360-degree rotation
+- Fly: First-person flight navigation
+- Map: Horizontal plane constrained movement
+
+Troubleshooting:
+- Ensure gallery/index.json exists and is properly formatted
+- Check browser console for detailed error messages  
+- Verify file paths in index.json match actual file locations
+- Description files are optional - gallery works without them
+- Gallery is optional - you can still upload CSV files manually
+- Use Debug Meshes button to troubleshoot rendering issues
