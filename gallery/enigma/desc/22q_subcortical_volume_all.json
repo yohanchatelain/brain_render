@@ -1,0 +1,11 @@
+{
+  "title": "Mapping Subcortical Brain Alterations in 22q11.2 Deletion Syndrome: Effects of Deletion Size and Convergence With Idiopathic Neuropsychiatric Illness",
+  "url": "https://doi.org/10.1176/appi.ajp.2019.19060583",
+  "authors": "Daquiang Sun et al.",
+  "year": "2020",
+  "disease": "22q11.2 deletion syndrome (22q)",
+  "subgroup": "adult",
+  "case-control": "22q vs Controls",
+  "metric": "Subcortical volume",
+  "value": "Cohen-d"
+}

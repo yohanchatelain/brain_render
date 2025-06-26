@@ -28,7 +28,7 @@ const brainAtlases = {
             'Left-Putamen', 'Right-Putamen', 'Left-Pallidum', 'Right-Pallidum',
             'Left-Hippocampus', 'Right-Hippocampus', 'Left-Amygdala', 'Right-Amygdala',
             'Left-Accumbens-area', 'Right-Accumbens-area', 'Left-VentralDC', 'Right-VentralDC'
-        ]
+        ],
     },
     destrieux: {
         cortical: [

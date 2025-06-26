@@ -1,0 +1,298 @@
+[
+  {
+    "paper": "Hettwer_2022",
+    "file": "Hettwer_2022/csv/adhd_thickness_all_thresholded.csv",
+    "description": "Hettwer_2022/desc/adhd_thickness_all.json",
+    "disease": "adhd",
+    "metric": "thickness",
+    "subgroup": "all"
+  },
+  {
+    "paper": "Hettwer_2022",
+    "file": "Hettwer_2022/csv/asd_thickness_all_thresholded.csv",
+    "description": "Hettwer_2022/desc/asd_thickness_all.json",
+    "disease": "asd",
+    "metric": "thickness",
+    "subgroup": "all"
+  },
+  {
+    "paper": "Hettwer_2022",
+    "file": "Hettwer_2022/csv/bd_thickness_all_thresholded.csv",
+    "description": "Hettwer_2022/desc/bd_thickness_all.json",
+    "disease": "bd",
+    "metric": "thickness",
+    "subgroup": "all"
+  },
+  {
+    "paper": "Hettwer_2022",
+    "file": "Hettwer_2022/csv/mdd_thickness_all_thresholded.csv",
+    "description": "Hettwer_2022/desc/mdd_thickness_all.json",
+    "disease": "mdd",
+    "metric": "thickness",
+    "subgroup": "all"
+  },
+  {
+    "paper": "Hettwer_2022",
+    "file": "Hettwer_2022/csv/ocd_thickness_all_thresholded.csv",
+    "description": "Hettwer_2022/desc/ocd_thickness_all.json",
+    "disease": "ocd",
+    "metric": "thickness",
+    "subgroup": "all"
+  },
+  {
+    "paper": "Hettwer_2022",
+    "file": "Hettwer_2022/csv/scz_thickness_all_thresholded.csv",
+    "description": "Hettwer_2022/desc/scz_thickness_all.json",
+    "disease": "scz",
+    "metric": "thickness",
+    "subgroup": "all"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/22q_area_all_thresholded.csv",
+    "description": "enigma/desc/22q_area_all.json",
+    "disease": "22q",
+    "metric": "area",
+    "subgroup": "all"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/22q_subcortical_volume_all_thresholded.csv",
+    "description": "enigma/desc/22q_subcortical_volume_all.json",
+    "disease": "22q",
+    "metric": "subcortical_volume",
+    "subgroup": "all"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/22q_thickness_all_thresholded.csv",
+    "description": "enigma/desc/22q_thickness_all.json",
+    "disease": "22q",
+    "metric": "thickness",
+    "subgroup": "all"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/adhd_area_adult_thresholded.csv",
+    "description": "enigma/desc/adhd_area_adult.json",
+    "disease": "adhd",
+    "metric": "area",
+    "subgroup": "adult"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/adhd_subcortical_volume_adult_thresholded.csv",
+    "description": "enigma/desc/adhd_subcortical_volume_adult.json",
+    "disease": "adhd",
+    "metric": "subcortical_volume",
+    "subgroup": "adult"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/adhd_thickness_adult_thresholded.csv",
+    "description": "enigma/desc/adhd_thickness_adult.json",
+    "disease": "adhd",
+    "metric": "thickness",
+    "subgroup": "adult"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/asd_subcortical_volume_meta_analysis_thresholded.csv",
+    "description": "enigma/desc/asd_subcortical_volume_meta_analysis.json",
+    "disease": "asd",
+    "metric": "subcortical_volume",
+    "subgroup": "meta_analysis"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/asd_thickness_meta_analysis_thresholded.csv",
+    "description": "enigma/desc/asd_thickness_meta_analysis.json",
+    "disease": "asd",
+    "metric": "thickness",
+    "subgroup": "meta_analysis"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/bipolar_area_adult_thresholded.csv",
+    "description": "enigma/desc/bipolar_area_adult.json",
+    "disease": "bipolar",
+    "metric": "area",
+    "subgroup": "adult"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/bipolar_subcortical_volume_typeII_thresholded.csv",
+    "description": "enigma/desc/bipolar_subcortical_volume_typeII.json",
+    "disease": "bipolar",
+    "metric": "subcortical_volume",
+    "subgroup": "typeII"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/bipolar_subcortical_volume_typeI_thresholded.csv",
+    "description": "enigma/desc/bipolar_subcortical_volume_typeI.json",
+    "disease": "bipolar",
+    "metric": "subcortical_volume",
+    "subgroup": "typeI"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/bipolar_thickness_adult_thresholded.csv",
+    "description": "enigma/desc/bipolar_thickness_adult.json",
+    "disease": "bipolar",
+    "metric": "thickness",
+    "subgroup": "adult"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/depression_area_adult_thresholded.csv",
+    "description": "enigma/desc/depression_area_adult.json",
+    "disease": "depression",
+    "metric": "area",
+    "subgroup": "adult"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/depression_subcortical_volume_all_thresholded.csv",
+    "description": "enigma/desc/depression_subcortical_volume_all.json",
+    "disease": "depression",
+    "metric": "subcortical_volume",
+    "subgroup": "all"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/depression_thickness_adult_thresholded.csv",
+    "description": "enigma/desc/depression_thickness_adult.json",
+    "disease": "depression",
+    "metric": "thickness",
+    "subgroup": "adult"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/epilepsy_subcortical_volume_all-epilepsy_thresholded.csv",
+    "description": "enigma/desc/epilepsy_subcortical_volume_all-epilepsy.json",
+    "disease": "epilepsy",
+    "metric": "subcortical_volume",
+    "subgroup": "all-epilepsy"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/epilepsy_subcortical_volume_all-other-epilepsy_thresholded.csv",
+    "description": "enigma/desc/epilepsy_subcortical_volume_all-other-epilepsy.json",
+    "disease": "epilepsy",
+    "metric": "subcortical_volume",
+    "subgroup": "all-other-epilepsy"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/epilepsy_subcortical_volume_gge_thresholded.csv",
+    "description": "enigma/desc/epilepsy_subcortical_volume_gge.json",
+    "disease": "epilepsy",
+    "metric": "subcortical_volume",
+    "subgroup": "gge"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/epilepsy_subcortical_volume_ltle_thresholded.csv",
+    "description": "enigma/desc/epilepsy_subcortical_volume_ltle.json",
+    "disease": "epilepsy",
+    "metric": "subcortical_volume",
+    "subgroup": "ltle"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/epilepsy_subcortical_volume_rtle_thresholded.csv",
+    "description": "enigma/desc/epilepsy_subcortical_volume_rtle.json",
+    "disease": "epilepsy",
+    "metric": "subcortical_volume",
+    "subgroup": "rtle"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/epilepsy_thickness_all-epilepsy_thresholded.csv",
+    "description": "enigma/desc/epilepsy_thickness_all-epilepsy.json",
+    "disease": "epilepsy",
+    "metric": "thickness",
+    "subgroup": "all-epilepsy"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/epilepsy_thickness_all-other-epilepsy_thresholded.csv",
+    "description": "enigma/desc/epilepsy_thickness_all-other-epilepsy.json",
+    "disease": "epilepsy",
+    "metric": "thickness",
+    "subgroup": "all-other-epilepsy"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/epilepsy_thickness_gge_thresholded.csv",
+    "description": "enigma/desc/epilepsy_thickness_gge.json",
+    "disease": "epilepsy",
+    "metric": "thickness",
+    "subgroup": "gge"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/epilepsy_thickness_ltle_thresholded.csv",
+    "description": "enigma/desc/epilepsy_thickness_ltle.json",
+    "disease": "epilepsy",
+    "metric": "thickness",
+    "subgroup": "ltle"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/epilepsy_thickness_rtle_thresholded.csv",
+    "description": "enigma/desc/epilepsy_thickness_rtle.json",
+    "disease": "epilepsy",
+    "metric": "thickness",
+    "subgroup": "rtle"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/ocd_area_adult_thresholded.csv",
+    "description": "enigma/desc/ocd_area_adult.json",
+    "disease": "ocd",
+    "metric": "area",
+    "subgroup": "adult"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/ocd_subcortical_volume_adult_thresholded.csv",
+    "description": "enigma/desc/ocd_subcortical_volume_adult.json",
+    "disease": "ocd",
+    "metric": "subcortical_volume",
+    "subgroup": "adult"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/ocd_thickness_adult_thresholded.csv",
+    "description": "enigma/desc/ocd_thickness_adult.json",
+    "disease": "ocd",
+    "metric": "thickness",
+    "subgroup": "adult"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/schizophrenia_area_all_thresholded.csv",
+    "description": "enigma/desc/schizophrenia_area_all.json",
+    "disease": "schizophrenia",
+    "metric": "area",
+    "subgroup": "all"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/schizophrenia_subcortical_volume_all_thresholded.csv",
+    "description": "enigma/desc/schizophrenia_subcortical_volume_all.json",
+    "disease": "schizophrenia",
+    "metric": "subcortical_volume",
+    "subgroup": "all"
+  },
+  {
+    "paper": "enigma",
+    "file": "enigma/csv/schizophrenia_thickness_all_thresholded.csv",
+    "description": "enigma/desc/schizophrenia_thickness_all.json",
+    "disease": "schizophrenia",
+    "metric": "thickness",
+    "subgroup": "all"
+  }
+]

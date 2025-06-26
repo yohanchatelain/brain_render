@@ -1,0 +1,11 @@
+{
+  "title": "Brain Imaging of the Cortex in ADHD: A Coordinated Analysis of Large-Scale Clinical and Population-Based Samples",
+  "url": "https://doi.org/10.1176/appi.ajp.2019.18091033",
+  "authors": "Martine Hoogman et al.",
+  "year": "2019",
+  "disease": "Attention-Deficit/Hyperactivity Disorder (ADHD)",
+  "subgroup": "adult",
+  "case-control": "ADHD vs Controls",
+  "metric": "Cortical thickness",
+  "value": "Cohen-d"
+}

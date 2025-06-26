@@ -1,0 +1,11 @@
+{
+  "title": "Large-scale mapping of cortical alterations in 22q11.2 deletion syndrome: Convergence with idiopathic psychosis and effects of deletion size",
+  "url": "https://www.nature.com/articles/s41380-018-0078-5",
+  "authors": "Daquiang Sun et al.",
+  "year": "2020",
+  "disease": "22q11.2 deletion syndrome (22q)",
+  "subgroup": "adult",
+  "case-control": "22q vs Controls",
+  "metric": "Surface area",
+  "value": "Cohen-d"
+}

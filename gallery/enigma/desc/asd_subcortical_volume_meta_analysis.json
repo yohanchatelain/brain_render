@@ -1,0 +1,11 @@
+{
+  "title": "Cortical and Subcortical Brain Morphometry Differences Between Patients With Autism Spectrum Disorder and Healthy Individuals Across the Lifespan: Results From the ENIGMA ASD Working Group",
+  "url": "https://doi.org/10.1176/appi.ajp.2017.17010100",
+  "authors": "Daan van Rooij et al.",
+  "year": "2017",
+  "disease": "Autism Spectrum Disorder (ASD)",
+  "subgroup": "adult",
+  "case-control": "ASD vs Controls",
+  "metric": "Subcortical volume",
+  "value": "Cohen-d"
+}

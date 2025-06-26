@@ -5,9 +5,96 @@ function init() {
     setupScene();
     window.cameraControls = setupControls();
     setupEventListeners();
+
+    // Set initial state after a small delay to ensure DOM is ready
+    setTimeout(() => {
+        setupInitialState();
+    }, 100);
+
     showInitialMessage();
     animate();
 }
+
+function setupInitialState() {
+    // Initially disable file upload until metric is selected
+    const csvFile = document.getElementById('csvFile');
+    const metricSelect = document.getElementById('metricSelect');
+
+    console.log('setupInitialState called');
+    console.log('csvFile in setupInitialState:', csvFile);
+    console.log('metricSelect in setupInitialState:', metricSelect);
+
+    if (csvFile && metricSelect) {
+        csvFile.disabled = true;
+        console.log('Initial state: csvFile.disabled set to true');
+        // Trigger handleMetricChange to set up initial state
+        handleMetricChange();
+    } else {
+        console.error('Elements not found in setupInitialState');
+    }
+}
+
+// Debug function for testing
+window.testMetricChange = function () {
+    console.log('Manual test of metric change functionality');
+    const metricSelect = document.getElementById('metricSelect');
+    const csvFile = document.getElementById('csvFile');
+
+    console.log('Current metricSelect value:', metricSelect ? metricSelect.value : 'element not found');
+    console.log('Current csvFile.disabled:', csvFile ? csvFile.disabled : 'element not found');
+
+    handleMetricChange();
+};
+
+// Direct enable function for testing
+window.forceEnableUpload = function () {
+    console.log('Force enabling upload...');
+    const csvFile = document.getElementById('csvFile');
+    const uploadWarning = document.getElementById('uploadWarning');
+
+    if (csvFile) {
+        csvFile.disabled = false;
+        csvFile.removeAttribute('disabled');
+        console.log('csvFile force enabled');
+    }
+    if (uploadWarning) {
+        uploadWarning.style.display = 'none';
+        console.log('Warning hidden');
+    }
+};
+
+// JavaScript to make sidebar sections collapsible with visible toggle indicators
+
+
+document.querySelectorAll('.section').forEach(section => {
+    const header = section.querySelector('h3');
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('section-content');
+
+    // Move all nodes except the header into the wrapper
+    Array.from(section.childNodes).forEach(node => {
+        if (node !== header) wrapper.appendChild(node);
+    });
+
+    // Clear section and re-append header + content wrapper
+    section.innerHTML = '';
+    section.appendChild(header);
+    section.appendChild(wrapper);
+
+    // Create and append toggle indicator
+    const indicator = document.createElement('span');
+    indicator.classList.add('toggle-indicator');
+    indicator.textContent = '▼';
+    header.appendChild(indicator);
+
+    // Add click handler to toggle collapsed state
+    header.addEventListener('click', () => {
+        section.classList.toggle('collapsed');
+        const isCollapsed = section.classList.contains('collapsed');
+        indicator.textContent = isCollapsed ? '▲' : '▼';
+    });
+});
+
 
 function showInitialMessage() {
     const loading = document.getElementById('loading');
@@ -15,12 +102,9 @@ function showInitialMessage() {
     loading.innerHTML = `
         <div style="text-align: center;">
             <h3 style="color: #4fc3f7; margin-bottom: 15px;">Brain Visualizer Ready</h3>
-            <p style="margin-bottom: 10px;">Please upload:</p>
-            <ul style="text-align: left; margin: 10px 0;">
-                <li>CSV file with "Structure" and "Cohen_d" columns</li>
-                <li>Brain mesh files in /meshes/ folder (OBJ format recommended)</li>
-            </ul>
-            <p style="margin-bottom: 10px;"><strong>Or browse the gallery for sample datasets!</strong></p>
+            <p style="margin-bottom: 10px;"><strong>Browse the gallery for sample datasets</strong></p>
+            <p style="margin-bottom: 10px;">or</p>
+            <p style="margin-bottom: 10px;"><strong>Upload a CSV file with "Structure" and "Cohen_d" columns</strong></p>
             <p style="font-size: 12px; opacity: 0.8;">Click anywhere to dismiss this message</p>
         </div>
     `;
@@ -36,12 +120,30 @@ function showInitialMessage() {
 }
 
 function setupEventListeners() {
-    document.getElementById('csvFile').addEventListener('change', handleFileUpload);
+    const csvFile = document.getElementById('csvFile');
+    const metricSelect = document.getElementById('metricSelect');
+
+    console.log('setupEventListeners called');
+    console.log('csvFile element:', csvFile);
+    console.log('metricSelect element:', metricSelect);
+
+    if (csvFile) {
+        csvFile.addEventListener('change', handleFileUpload);
+    } else {
+        console.error('csvFile element not found');
+    }
+
     document.getElementById('corticalBtn').addEventListener('click', () => setView('cortical'));
     document.getElementById('subcorticalBtn').addEventListener('click', () => setView('subcortical'));
     document.getElementById('atlasSelect').addEventListener('change', handleAtlasChange);
-    document.getElementById('corticalMetricSelect').addEventListener('change', handleMetricChange);
-    document.getElementById('subcorticalMetricSelect').addEventListener('change', handleMetricChange);
+
+    if (metricSelect) {
+        metricSelect.addEventListener('change', handleMetricChange);
+        console.log('metricSelect event listener added');
+    } else {
+        console.error('metricSelect element not found');
+    }
+
     document.getElementById('minRange').addEventListener('change', updateColorMapping);
     document.getElementById('maxRange').addEventListener('change', updateColorMapping);
 
@@ -81,6 +183,39 @@ function handleAtlasChange() {
 }
 
 function handleMetricChange() {
+    console.log('=== handleMetricChange called ===');
+
+    const metricSelect = document.getElementById('metricSelectUpload');
+    const csvFile = document.getElementById('csvFile');
+    const uploadWarning = document.getElementById('uploadWarning');
+
+    if (!metricSelect || !csvFile || !uploadWarning) {
+        console.error('Missing elements:', {
+            metricSelect: !!metricSelect,
+            csvFile: !!csvFile,
+            uploadWarning: !!uploadWarning
+        });
+        return;
+    }
+
+    const selectedValue = metricSelect.value;
+    console.log('Selected metric value:', selectedValue);
+
+    // Enable/disable file upload based on metric selection
+    if (selectedValue && selectedValue !== '') {
+        console.log('✅ ENABLING file upload');
+        csvFile.disabled = false;
+        csvFile.removeAttribute('disabled'); // Make sure it's really enabled
+        uploadWarning.style.display = 'none';
+        console.log('File input enabled, warning hidden');
+    } else {
+        console.log('❌ DISABLING file upload');
+        csvFile.disabled = true;
+        csvFile.setAttribute('disabled', 'disabled');
+        uploadWarning.style.display = 'block';
+        console.log('File input disabled, warning shown');
+    }
+
     // Reset NAVR data when metric changes
     navrData = {};
     navrDataLoaded = false;

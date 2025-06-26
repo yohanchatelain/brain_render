@@ -1,0 +1,11 @@
+{
+  "title": "Subcortical volumetric abnormalities in bipolar disorder",
+  "url": "https://doi.org/10.1038/mp.2015.227",
+  "authors": "D P Hibar et al.",
+  "year": "2016",
+  "disease": "Bipolar Disorder (BD)",
+  "subgroup": "Type I",
+  "case-control": "BD vs Controls",
+  "metric": "Subcortical volume",
+  "value": "Cohen-d"
+}

@@ -1,0 +1,11 @@
+{
+  "title": "Cortical Abnormalities Associated With Pediatric and Adult Obsessive-Compulsive Disorder: Findings From the ENIGMA Obsessive-Compulsive Disorder Working Group",
+  "url": "https://doi.org/10.1176/appi.ajp.2017.17050485",
+  "authors": "Premika S.W. Boedhoe et al.",
+  "year": "2017",
+  "disease": "Obsessive-Compulsive Disorder (OCD)",
+  "subgroup": "adult",
+  "case-control": "OCD vs Controls",
+  "metric": "Cortical thickness",
+  "value": "Cohen-d"
+}

@@ -1,0 +1,11 @@
+{
+  "title": "Structural brain abnormalities in the common epilepsies assessed in a worldwide ENIGMA study",
+  "url": "https://doi.org/10.1093/brain/awx341",
+  "authors": "Christopher D Whelan et al.",
+  "year": "2018",
+  "disease": "Epilepsy",
+  "subgroup": "Right Temporal Lobe Epilepsy (RTLE)",
+  "case-control": "Epilepsy vs Controls",
+  "metric": "Cortical thickness",
+  "value": "Cohen-d"
+}

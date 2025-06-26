@@ -1,0 +1,11 @@
+{
+  "title": "Coordinated cortical thickness alterations across six neurodevelopmental and psychiatric disorders",
+  "url": "https://doi.org/10.1038/s41467-022-34367-6",
+  "authors": "M. D. Hettwer et al.",
+  "year": "2022",
+  "disease": "Bipolar Disorder (BD)",
+  "subgroup": "adult",
+  "case-control": "BD vs Controls",
+  "metric": "Cortical thickness",
+  "value": "Cohen-d"
+}

@@ -64,7 +64,6 @@ async function loadBrainMeshes() {
 
     if (brainMeshes.length === 0) {
         console.warn(`No mesh files found. Creating simple visualization from CSV data.`);
-        createSimpleVisualization();
     } else {
         updateBrainVisualization();
         console.log(`Successfully loaded ${brainMeshes.length} brain structures (${errorCount} failed)`);
@@ -73,13 +72,24 @@ async function loadBrainMeshes() {
 
 // Load a single mesh file
 async function loadSingleMesh(structure, type) {
-    const possiblePaths = [
-        `meshes/${type}/${currentAtlas}/${structure}`,
-        `meshes/${type}/${structure}`,
-        `meshes/${currentAtlas}/${structure}`,
-        `meshes/${structure}`,
-        `${structure}`
-    ];
+    if (type === 'cortical') {
+        possiblePaths = [
+            `meshes/${type}/${currentAtlas}/${structure}`,
+        ];
+    } else if (type === 'subcortical') {
+        possiblePaths = [
+            `meshes/${type}/${structure}`,
+        ];
+    } else {
+        throw new Error(`Unknown type "${type}" for structure "${structure}"`);
+    }
+
+    // if structure contains Thalamus, add possible Thalamus paths
+    if (structure.includes('Thalamus')) {
+        possiblePaths.push(
+            `meshes/${type}/${structure}-Proper`,
+        );
+    }
 
     const possibleFormats = ['obj', 'ply'];
 
@@ -92,6 +102,11 @@ async function loadSingleMesh(structure, type) {
         for (const basePath of possiblePaths) {
             const path = `${basePath}.${format}`;
             try {
+                // check if the file exists
+                const response = await fetch(path, { method: 'HEAD' });
+                if (!response.ok) {
+                    continue;
+                }
                 const object = await loadMeshFile(path, format);
                 if (object) {
                     setupMeshProperties(object, structure, type);
@@ -220,82 +235,7 @@ function setupMeshProperties(object, structure, type) {
     });
 }
 
-// Simple visualization fallback when no mesh files are found
-function createSimpleVisualization() {
-    clearBrainMeshes();
 
-    const createdStructures = new Set();
-
-    Object.entries(currentData).forEach(([structure, data], index) => {
-        if (createdStructures.has(structure)) return;
-
-        try {
-            let position = getStructurePosition(structure, data.type, data.hemisphere, index);
-            let size = data.type === 'cortical' ? 8 : 5;
-
-            let geometry;
-            if (data.type === 'cortical') {
-                geometry = new THREE.SphereGeometry(size, 12, 12);
-                geometry.scale(1, 0.7, 1.3);
-            } else {
-                geometry = new THREE.SphereGeometry(size, 10, 10);
-            }
-
-            const colorRGB = getColorFromCohenD(data.cohen_d);
-            const material = new THREE.MeshPhongMaterial({
-                color: new THREE.Color(colorRGB.r, colorRGB.g, colorRGB.b),
-                transparent: true,
-                opacity: 0.8,
-                shininess: 30
-            });
-
-            const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(position.x, position.y, position.z);
-            mesh.castShadow = true;
-            mesh.receiveShadow = true;
-
-            mesh.userData = {
-                structure: structure,
-                cohen_d: data.cohen_d,
-                type: data.type,
-                hemisphere: data.hemisphere
-            };
-
-            scene.add(mesh);
-            brainMeshes.push(mesh);
-            createdStructures.add(structure);
-
-        } catch (error) {
-            console.warn(`Error creating simple visualization for ${structure}:`, error);
-        }
-    });
-
-    if (brainMeshes.length > 0) {
-        createBrainOutline();
-    }
-
-    updateBrainVisualization();
-    console.log(`Created simple visualization for ${brainMeshes.length} structures`);
-
-    // Show info about simple mode
-    setTimeout(() => {
-        const loading = document.getElementById('loading');
-        loading.style.display = 'block';
-        loading.innerHTML = `
-            <div style="text-align: center; color: #ffc107;">
-                <h3 style="color: #ffc107; margin-bottom: 15px;">ℹ️ Simple Visualization Mode</h3>
-                <div style="margin-bottom: 15px;">
-                    Showing basic shapes for ${brainMeshes.length} CSV data structures.<br>
-                    For detailed brain visualization, upload mesh files.
-                </div>
-                <button onclick="document.getElementById('loading').style.display='none'" 
-                        style="background: #ffc107; color: black; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
-                    Continue with Simple View
-                </button>
-            </div>
-        `;
-    }, 1000);
-}
 
 // Position structures in 3D space for simple visualization
 function getStructurePosition(structure, type, hemisphere, index) {

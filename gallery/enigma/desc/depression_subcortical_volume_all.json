@@ -1,0 +1,11 @@
+{
+  "title": "Subcortical brain alterations in major depressive disorder: findings from the ENIGMA Major Depressive Disorder working group",
+  "url": "https://doi.org/10.1038/mp.2015.69",
+  "authors": "Schmaal et al.",
+  "year": "2016",
+  "disease": "Major Depressive Disorder (MDD)",
+  "subgroup": "all",
+  "case-control": "MDD vs Controls",
+  "metric": "Subcortical volume",
+  "value": "Cohen-d"
+}

@@ -1,0 +1,11 @@
+{
+  "title": "Cortical abnormalities in bipolar disorder: an MRI analysis of 6503 individuals from the ENIGMA Bipolar Disorder Working Group",
+  "url": "https://doi.org/10.1038/mp.2017.73",
+  "authors": "D P Hibar et al.",
+  "year": "2018",
+  "disease": "Bipolar Disorder (BD)",
+  "subgroup": "adult",
+  "case-control": "BD vs Controls",
+  "metric": "Cortical thickness",
+  "value": "Cohen-d"
+}

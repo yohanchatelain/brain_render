@@ -6,31 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brain Cohen's d Visualizer</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 </head>
 
 <body>
     <div id="container">
         <div id="sidebar">
-            <h2 style="color: #4fc3f7; text-align: center; margin-bottom: 20px; font-size: 18px;">Brain Cohen's d
-                Visualizer</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="color: #4fc3f7; flex: 1; text-align: center; margin: 0; font-size: 18px;">Brain Cohen's d
+                    Visualizer</h2>
+                <button id="themeToggle" onclick="toggleTheme()" class="theme-toggle">🌙</button>
+            </div>
 
             <div class="note">
-                <strong>Required:</strong> Upload a CSV with columns "Structure" and "Cohen_d" for data visualization.
+                <strong>Instruction:</strong>
+                Browse the gallery or upload a CSV with columns "Structure" and "Cohen_d".
+
             </div>
 
-            <div class="section">
-                <h3>📁 Data Upload</h3>
-                <input type="file" id="csvFile" accept=".csv" />
-                <div style="margin-top: 10px; font-size: 12px; opacity: 0.7;">
-                    Expected format: CSV with "Structure" and "Cohen_d" columns
-                </div>
-            </div>
+
 
             <div class="section">
                 <h3>🎨 Gallery</h3>
-                <div style="margin-bottom: 10px;">
-                    <button id="loadGalleryBtn" onclick="loadGallery()">Browse Gallery</button>
-                    <button id="refreshGalleryBtn" onclick="refreshGallery()" style="display: none;">Refresh</button>
+                <div style="margin-bottom: 10px; display: flex; gap: 5px; flex-wrap: nowrap;">
+                    <button id="loadGalleryBtn" onclick="loadGallery()">Browse</button>
+                    <button id="randomExampleBtn" onclick="loadRandomExample()"
+                        style="display: none; font-size: 20px;">🎲</button>
+                    <button id="refreshGalleryBtn" onclick="refreshGallery()"
+                        style="display: none; font-size: 20px;">↺</button>
                 </div>
 
                 <div id="galleryContainer" style="display: none;">
@@ -66,46 +70,50 @@
             </div>
 
             <div class="section">
-                <h3>🧠 View Selection</h3>
-                <div class="button-group">
-                    <button id="corticalBtn" class="active">Cortical</button>
-                    <button id="subcorticalBtn">Subcortical</button>
+                <h3>📁 Data Upload</h3>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-size: 12px; font-weight: bold;">Brain
+                        View:</label>
+                    <div class="button-group">
+                        <button id="corticalBtn" class="active">Cortical</button>
+                        <button id="subcorticalBtn">Subcortical</button>
+                    </div>
                 </div>
 
-                <select id="atlasSelect">
-                    <option value="desikan">Desikan-Killiany Atlas</option>
-                    <option value="destrieux">Destrieux Atlas</option>
-                    <option value="dkt">DKT Atlas</option>
-                </select>
-            </div>
-
-            <div class="section">
-                <h3>📏 Metric & Thresholding</h3>
-                <div style="margin-bottom: 10px;">
-                    <label style="display: block; margin-bottom: 5px; font-size: 12px;">Cortical Metric:</label>
-                    <select id="corticalMetricSelect">
-                        <option value="thickness">Cortical Thickness</option>
-                        <option value="area">Surface Area</option>
-                        <option value="volume">Cortical Volume</option>
+                <div style="margin-bottom: 15px;">
+                    <label
+                        style="display: block; margin-bottom: 5px; font-size: 12px; font-weight: bold;">Atlas:</label>
+                    <select id="atlasSelect">
+                        <option value="desikan">Desikan-Killiany Atlas</option>
+                        <option value="destrieux">Destrieux Atlas</option>
+                        <option value="dkt">DKT Atlas</option>
                     </select>
                 </div>
 
                 <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-size: 12px;">Subcortical Metric:</label>
-                    <select id="subcorticalMetricSelect">
-                        <option value="volume">Subcortical Volume</option>
+                    <label style="display: block; margin-bottom: 5px; font-size: 12px; font-weight: bold;">Metric (for
+                        NAVR thresholding):</label>
+                    <select id="metricSelectUpload" onchange="onMetricUploadChange()">
+                        <option value="">Select a metric...</option>
+                        <option value="thickness">Cortical Thickness</option>
+                        <option value="area">Surface Area</option>
+                        <option value="volume">Volume</option>
                     </select>
                 </div>
 
-                <div class="button-group">
-                    <button id="loadNavrBtn" onclick="loadNavrData()">Load NAVR Data</button>
-                    <button id="toggleThresholdBtn" onclick="toggleThresholding()" disabled>Apply Threshold</button>
+                <div style="margin-bottom: 10px;">
+                    <input type="file" id="csvFile" accept=".csv" disabled />
+                    <div id="uploadWarning" style="margin-top: 5px; font-size: 12px; color: #ff6b6b;">
+                        Please select a metric to enable file upload
+                    </div>
                 </div>
 
-                <div id="thresholdStatus" style="margin-top: 10px; font-size: 11px; opacity: 0.7;">
-                    No NAVR data loaded
+                <div style="margin-top: 10px; font-size: 12px; opacity: 0.7;">
+                    Expected format: CSV with "Structure" and "Cohen_d" columns
                 </div>
             </div>
+
 
             <div class="section">
                 <h3>🎨 Color Mapping</h3>
@@ -123,31 +131,31 @@
                     <input type="number" id="maxRange" value="2.0" step="0.1" />
                 </div>
 
-                <button onclick="updateColorMapping()">Update Range</button>
-                <button onclick="autoRange()">Auto Range</button>
+                <div class="button-group" style="display: flex; gap: 5px; flex-wrap: nowrap;">
+                    <button onclick="updateColorMapping()">Update Range</button>
+                    <button onclick="autoRange()">Auto Range</button>
+                </div>
             </div>
 
             <div class="section">
-                <h3>📊 Data Statistics</h3>
-                <div class="stats">
-                    <div class="stat-item">
-                        <div class="stat-number" id="validCount">0</div>
-                        <div class="stat-label">Valid Values</div>
+                <h3>🌈 Scene Colors</h3>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <div style="flex: 1;">
+                        <label style="display: block; margin-bottom: 5px; font-size: 12px;">Thresholded Regions</label>
+                        <input type="color" id="thresholdedColorPicker" value="#333333"
+                            onchange="updateThresholdedColor()">
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="nanCount">0</div>
-                        <div class="stat-label">Thresholded Structures</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="totalCount">0</div>
-                        <div class="stat-label">Total Structures</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="meanCohen">0.00</div>
-                        <div class="stat-label">Mean Cohen's d</div>
+
+                    <div style="flex: 1;">
+                        <label style="display: block; margin-bottom: 5px; font-size: 12px;">Scene Background</label>
+                        <input type="color" id="backgroundColorPicker" value="#1a1a2e"
+                            onchange="updateBackgroundColor()">
                     </div>
                 </div>
+
+                <button onclick="resetSceneColors()" style="width: 100%; margin-top: 5px;">Reset to Default</button>
             </div>
+
 
             <div class="section">
                 <h3>🎮 Camera Controls</h3>
@@ -189,7 +197,7 @@
                 <div class="button-group">
                     <button onclick="toggleWireframe()">Wireframe</button>
                     <button onclick="resetView()">Reset View</button>
-                    <button onclick="toggleInfo()">Show Info</button>
+                    <button onclick="toggleInfo()" style="display: block;">Hide Info</button>
                     <button onclick="debugMeshes()">Debug Meshes</button>
                 </div>
 
@@ -203,19 +211,68 @@
 
         <div id="canvas-container">
             <div id="loading">Loading brain data...</div>
-            <div id="info-panel" class="info-panel">
+
+            <!-- Interaction Guide Panel -->
+            <div id="interaction-panel" class="interaction-panel">
                 <h4>Interaction Guide</h4>
                 <ul style="margin: 10px 0; padding-left: 20px;">
                     <li>Mouse drag: Rotate view</li>
                     <li>Scroll: Zoom in/out</li>
                     <li>Click structure: Show details</li>
                 </ul>
-                <div id="structure-info"></div>
+            </div>
+
+            <!-- Region Info Panel -->
+            <div id="region-info-panel" class="region-info-panel">
+                <h4>Region Info</h4>
+                <div id="structure-info">
+                    <p style="margin: 10px 0; color: #888; font-style: italic;">Click on a brain region to view details
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 
-    <a href="#" class="github-link" onclick="showGithubInstructions()">📁 GitHub Setup Guide</a>
+    <!-- Bottom Bar for Threshold and Statistics -->
+    <div id="bottom-bar">
+        <div class="bottom-section">
+            <h4>📏 NAVR Thresholding</h4>
+            <div class="bottom-controls">
+                <button id="loadNavrBtn" onclick="loadNavrData()">Load NAVR Data</button>
+                <button id="toggleThresholdBtn" onclick="toggleThresholding()" disabled>Apply Threshold</button>
+                <button id="exportDataBtn" onclick="exportThresholdedData()" disabled>📄 Export Data</button>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="showThresholdedCheck" onchange="toggleShowThresholded()">
+                    Show Thresholded Regions
+                </label>
+            </div>
+            <div id="thresholdStatus">No NAVR data loaded</div>
+        </div>
+
+        <div class="bottom-section">
+            <h4>📊 Data Statistics</h4>
+            <div class="stats-horizontal">
+                <div class="stat-item">
+                    <div class="stat-number" id="validCount">0</div>
+                    <div class="stat-label">Non-thresholded</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="nanCount">0</div>
+                    <div class="stat-label">Thresholded</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalCount">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="meanCohen">0.00</div>
+                    <div class="stat-label">Mean Cohen's d</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <a href="#" class="github-link" onclick="showGithubInstructions()">📁 GitHub Setup Guide</a> -->
 
     <!-- Include required libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -223,9 +280,9 @@
     <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/controls/TrackballControls.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/controls/FlyControls.js"></script>
-    <script src="https://unpkg.com/three@0.128.0/examples/js/controls/MapControls.js"></script>
+    <!-- <script src="https://unpkg.com/three@0.128.0/examples/js/controls/MapControls.js"></script> -->
     <script src="https://unpkg.com/three@0.128.0/examples/js/utils/BufferGeometryUtils.js"></script>
-    
+
     <!-- Modular JavaScript files -->
     <script src="js/loaders.js"></script>
     <script src="js/atlas-definitions.js"></script>

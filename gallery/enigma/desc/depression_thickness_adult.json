@@ -1,0 +1,11 @@
+{
+  "title": "Cortical abnormalities in adults and adolescents with major depression based on brain scans from 20 cohorts worldwide in the ENIGMA Major Depressive Disorder Working Group",
+  "url": "https://doi.org/10.1038/mp.2016.60",
+  "authors": "Schmaal et al.",
+  "year": "2017",
+  "disease": "Major Depressive Disorder (MDD)",
+  "subgroup": "adult",
+  "case-control": "MDD vs Controls",
+  "metric": "Cortical thickness",
+  "value": "Cohen-d"
+}

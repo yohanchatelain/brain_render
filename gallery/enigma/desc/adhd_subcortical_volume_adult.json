@@ -1,0 +1,11 @@
+{
+  "title": "Subcortical brain volume differences in participants with attention deficit hyperactivity disorder in children and adults: a cross-sectional mega-analysis",
+  "url": "https://doi.org/10.1016/S2215-0366(17)30049-4",
+  "authors": "Martine Hoogman et al.",
+  "year": "2017",
+  "disease": "Attention-Deficit/Hyperactivity Disorder (ADHD)",
+  "subgroup": "adult",
+  "case-control": "ADHD vs Controls",
+  "metric": "Subcortical volume",
+  "value": "Cohen-d"
+}

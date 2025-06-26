@@ -1,0 +1,11 @@
+{
+  "title": "Cortical Brain Abnormalities in 4474 Individuals With Schizophrenia and 5098 Control Subjects via the Enhancing Neuro Imaging Genetics Through Meta Analysis (ENIGMA) Consortium",
+  "url": "https://doi.org/10.1016/j.biopsych.2018.04.023",
+  "authors": "Theo G.M. van Erp",
+  "year": "2018",
+  "disease": "Schizophrenia",
+  "subgroup": "adult",
+  "case-control": "Schizophrenia vs Controls",
+  "metric": "Cortical thickness",
+  "value": "Cohen-d"
+}
