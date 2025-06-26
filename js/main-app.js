@@ -18,19 +18,26 @@ function init() {
 function setupInitialState() {
     // Initially disable file upload until metric is selected
     const csvFile = document.getElementById('csvFile');
-    const metricSelect = document.getElementById('metricSelect');
+    const metricSelectUpload = document.getElementById('metricSelectUpload');
+    const uploadWarning = document.getElementById('uploadWarning');
 
     console.log('setupInitialState called');
-    console.log('csvFile in setupInitialState:', csvFile);
-    console.log('metricSelect in setupInitialState:', metricSelect);
 
-    if (csvFile && metricSelect) {
+    if (csvFile) {
         csvFile.disabled = true;
         console.log('Initial state: csvFile.disabled set to true');
-        // Trigger handleMetricChange to set up initial state
-        handleMetricChange();
+    }
+
+    if (uploadWarning) {
+        uploadWarning.style.display = 'block';
+        console.log('Upload warning shown initially');
+    }
+
+    // Trigger onMetricUploadChange to set up initial state if function exists
+    if (typeof onMetricUploadChange === 'function') {
+        onMetricUploadChange();
     } else {
-        console.error('Elements not found in setupInitialState');
+        console.log('onMetricUploadChange not available yet');
     }
 }
 
@@ -120,34 +127,46 @@ function showInitialMessage() {
 }
 
 function setupEventListeners() {
-    const csvFile = document.getElementById('csvFile');
-    const metricSelect = document.getElementById('metricSelect');
-
     console.log('setupEventListeners called');
-    console.log('csvFile element:', csvFile);
-    console.log('metricSelect element:', metricSelect);
 
+    // Helper function to safely add event listeners
+    function addEventListenerSafe(elementId, event, handler) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.addEventListener(event, handler);
+            console.log(`✅ Event listener added to ${elementId}`);
+        } else {
+            console.warn(`⚠️ Element not found: ${elementId}`);
+        }
+    }
+
+    // File upload handler
+    const csvFile = document.getElementById('csvFile');
     if (csvFile) {
         csvFile.addEventListener('change', handleFileUpload);
+        console.log('✅ File upload handler added');
     } else {
-        console.error('csvFile element not found');
+        console.warn('⚠️ csvFile element not found');
     }
 
-    document.getElementById('corticalBtn').addEventListener('click', () => setView('cortical'));
-    document.getElementById('subcorticalBtn').addEventListener('click', () => setView('subcortical'));
-    document.getElementById('atlasSelect').addEventListener('change', handleAtlasChange);
+    // View buttons
+    addEventListenerSafe('corticalBtn', 'click', () => setView('cortical'));
+    addEventListenerSafe('subcorticalBtn', 'click', () => setView('subcortical'));
+    
+    // Atlas selector
+    addEventListenerSafe('atlasSelect', 'change', handleAtlasChange);
 
-    if (metricSelect) {
-        metricSelect.addEventListener('change', handleMetricChange);
-        console.log('metricSelect event listener added');
-    } else {
-        console.error('metricSelect element not found');
-    }
+    // Metric selectors (both gallery and upload)
+    addEventListenerSafe('metricSelect', 'change', onMetricChange);
+    addEventListenerSafe('metricSelectUpload', 'change', onMetricUploadChange);
 
-    document.getElementById('minRange').addEventListener('change', updateColorMapping);
-    document.getElementById('maxRange').addEventListener('change', updateColorMapping);
+    // Color range controls
+    addEventListenerSafe('minRange', 'change', updateColorMapping);
+    addEventListenerSafe('maxRange', 'change', updateColorMapping);
 
+    // Global window resize handler
     window.addEventListener('resize', handleResize);
+    console.log('✅ Window resize handler added');
 }
 
 function handleAtlasChange() {
@@ -182,60 +201,15 @@ function handleAtlasChange() {
     }
 }
 
+// This function is now handled by gallery-manager.js
+// Keeping a stub here for backward compatibility
 function handleMetricChange() {
-    console.log('=== handleMetricChange called ===');
-
-    const metricSelect = document.getElementById('metricSelectUpload');
-    const csvFile = document.getElementById('csvFile');
-    const uploadWarning = document.getElementById('uploadWarning');
-
-    if (!metricSelect || !csvFile || !uploadWarning) {
-        console.error('Missing elements:', {
-            metricSelect: !!metricSelect,
-            csvFile: !!csvFile,
-            uploadWarning: !!uploadWarning
-        });
-        return;
-    }
-
-    const selectedValue = metricSelect.value;
-    console.log('Selected metric value:', selectedValue);
-
-    // Enable/disable file upload based on metric selection
-    if (selectedValue && selectedValue !== '') {
-        console.log('✅ ENABLING file upload');
-        csvFile.disabled = false;
-        csvFile.removeAttribute('disabled'); // Make sure it's really enabled
-        uploadWarning.style.display = 'none';
-        console.log('File input enabled, warning hidden');
+    console.log('handleMetricChange called - delegating to onMetricUploadChange');
+    if (typeof onMetricUploadChange === 'function') {
+        onMetricUploadChange();
     } else {
-        console.log('❌ DISABLING file upload');
-        csvFile.disabled = true;
-        csvFile.setAttribute('disabled', 'disabled');
-        uploadWarning.style.display = 'block';
-        console.log('File input disabled, warning shown');
+        console.warn('onMetricUploadChange function not available');
     }
-
-    // Reset NAVR data when metric changes
-    navrData = {};
-    navrDataLoaded = false;
-    isThresholded = false;
-    document.getElementById('toggleThresholdBtn').disabled = true;
-    document.getElementById('toggleThresholdBtn').textContent = 'Apply Threshold';
-    document.getElementById('toggleThresholdBtn').style.background = 'linear-gradient(45deg, #4fc3f7, #29b6f6)';
-    document.getElementById('thresholdStatus').textContent = 'No NAVR data loaded - metric changed';
-
-    // Restore original data if thresholding was applied
-    if (Object.keys(originalData).length > 0) {
-        currentData = {};
-        Object.keys(originalData).forEach(structure => {
-            currentData[structure] = { ...originalData[structure] };
-        });
-        updateStatistics();
-        updateBrainVisualization();
-    }
-
-    console.log('Metric changed - NAVR data reset');
 }
 
 async function showGithubInstructions() {
@@ -249,11 +223,33 @@ async function showGithubInstructions() {
     }
 }
 
-// Initialize colorbar on load
-updateColorbar();
+// Initialize colorbar on load - safely
+function initializeColorbar() {
+    if (typeof updateColorbar === 'function') {
+        updateColorbar();
+    } else {
+        console.log('updateColorbar function not available yet');
+    }
+}
+
+// Start the application only after DOM is fully loaded
+function startApplication() {
+    if (document.readyState === 'loading') {
+        console.log('DOM still loading, waiting for DOMContentLoaded...');
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOMContentLoaded fired, initializing app...');
+            initializeColorbar();
+            init();
+        });
+    } else {
+        console.log('DOM already loaded, initializing app immediately...');
+        initializeColorbar();
+        init();
+    }
+}
 
 // Start the application
-init();
+startApplication();
 
 // Cleanup on page unload
 window.addEventListener('beforeunload', () => {
