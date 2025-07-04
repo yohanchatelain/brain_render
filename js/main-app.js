@@ -111,7 +111,7 @@ function showInitialMessage() {
             <h3 style="color: #4fc3f7; margin-bottom: 15px;">Brain Visualizer Ready</h3>
             <p style="margin-bottom: 10px;"><strong>Browse the gallery for sample datasets</strong></p>
             <p style="margin-bottom: 10px;">or</p>
-            <p style="margin-bottom: 10px;"><strong>Upload a CSV file with "Structure" and "Cohen_d" columns</strong></p>
+            <p style="margin-bottom: 10px;"><strong>Upload a CSV file with "Structure", "Cohen_d" and "population_size" columns</strong></p>
             <p style="font-size: 12px; opacity: 0.8;">Click anywhere to dismiss this message</p>
         </div>
     `;
@@ -152,7 +152,7 @@ function setupEventListeners() {
     // View buttons
     addEventListenerSafe('corticalBtn', 'click', () => setView('cortical'));
     addEventListenerSafe('subcorticalBtn', 'click', () => setView('subcortical'));
-    
+
     // Atlas selector
     addEventListenerSafe('atlasSelect', 'change', handleAtlasChange);
 

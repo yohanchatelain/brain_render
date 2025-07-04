@@ -40,7 +40,7 @@ const DATA_CONFIG = {
     COHEN_D_COLUMNS: ['Cohen_d', 'd_icv', 'Cohen_d_thresholded', 'd_icv_thresholded'],
     NAVR_AUTO_LOAD_DELAY: 500, // milliseconds
     EXPORT_TIMESTAMP_FORMAT: 'YYYY-MM-DD',
-    
+
     SELECTORS: {
         METRIC_UPLOAD: 'metricSelectUpload',
         METRIC_GALLERY: 'metricSelect',
@@ -49,7 +49,7 @@ const DATA_CONFIG = {
         THRESHOLD_STATUS: 'thresholdStatus',
         LOADING: 'loading'
     },
-    
+
     STATISTICS: {
         VALID_COUNT: 'validCount',
         NAN_COUNT: 'nanCount',
@@ -266,7 +266,7 @@ function getStructureType(structure) {
     if (atlas && atlas.subcortical && atlas.subcortical.includes(structure)) {
         return 'subcortical';
     }
-    
+
     return 'cortical';
 }
 
@@ -294,7 +294,7 @@ function extractCohenD(row) {
  */
 function processCsvData(data) {
     logDebug('Processing CSV data', { rowCount: data.length });
-    
+
     if (!Array.isArray(data) || data.length === 0) {
         console.error('[DATA] Invalid or empty CSV data provided');
         alert('No valid data found in CSV file');
@@ -327,7 +327,7 @@ function processCsvData(data) {
             // Normalize structure name
             const originalStructure = row.Structure.trim();
             const normalizedStructure = normalizeStructureName(originalStructure);
-            
+
             if (!normalizedStructure) {
                 console.warn(`[DATA] Could not normalize structure: ${originalStructure}`);
                 skippedCount++;
@@ -345,7 +345,7 @@ function processCsvData(data) {
             // Store in both current and original data
             currentData[normalizedStructure] = structureData;
             originalData[normalizedStructure] = { ...structureData };
-            
+
             processedCount++;
 
         } catch (error) {
@@ -361,15 +361,15 @@ function processCsvData(data) {
 
     // Update UI and load meshes
     updateStatistics();
-    
+
     if (typeof autoRange === 'function') {
         autoRange();
     }
-    
+
     if (typeof loadBrainMeshes === 'function') {
         loadBrainMeshes();
     }
-    
+
     // Enable export functionality
     enableDataExport();
 
@@ -384,14 +384,14 @@ function resetThresholdingState() {
     isThresholded = false;
     navrDataLoaded = false;
     navrData = {};
-    
+
     const toggleBtn = getDataElement(DATA_CONFIG.SELECTORS.TOGGLE_THRESHOLD_BTN);
     if (toggleBtn) {
         toggleBtn.disabled = true;
         toggleBtn.textContent = 'Apply Threshold';
         toggleBtn.style.background = 'linear-gradient(45deg, #4fc3f7, #29b6f6)';
     }
-    
+
     updateElementText(DATA_CONFIG.SELECTORS.THRESHOLD_STATUS, 'No NAVR data loaded');
 }
 
@@ -441,7 +441,7 @@ function handleFileUpload(event) {
     }
 
     logDebug(`Processing uploaded file: ${file.name}`);
-    
+
     const loadingElement = getDataElement(DATA_CONFIG.SELECTORS.LOADING);
     if (loadingElement) {
         loadingElement.style.display = 'block';
@@ -451,7 +451,7 @@ function handleFileUpload(event) {
         header: true,
         dynamicTyping: true,
         skipEmptyLines: true,
-        complete: function(results) {
+        complete: function (results) {
             try {
                 processCsvData(results.data);
             } catch (error) {
@@ -463,7 +463,7 @@ function handleFileUpload(event) {
                 }
             }
         },
-        error: function(error) {
+        error: function (error) {
             console.error('[DATA] CSV parsing error:', error);
             alert('Error parsing CSV file. Please check the format.');
             if (loadingElement) {
@@ -493,7 +493,7 @@ async function loadNavrData() {
     }
 
     logDebug(`Loading NAVR data for metric: ${selectedMetric}`);
-    
+
     const loadingElement = getDataElement(DATA_CONFIG.SELECTORS.LOADING);
     if (loadingElement) {
         loadingElement.style.display = 'block';
@@ -503,13 +503,13 @@ async function loadNavrData() {
     try {
         const navrFiles = buildNavrFilePaths(selectedMetric);
         const loadResults = await loadNavrFiles(navrFiles);
-        
+
         if (loadResults.totalLoaded > 0) {
             handleSuccessfulNavrLoad(loadResults);
         } else {
             handleFailedNavrLoad(navrFiles);
         }
-        
+
     } catch (error) {
         console.error('[DATA] Error in NAVR loading process:', error);
         alert(`Error loading NAVR data: ${error.message}`);
@@ -528,7 +528,7 @@ async function loadNavrData() {
 function buildNavrFilePaths(selectedMetric) {
     const currentAtlas = window.currentAtlas || 'desikan';
     const currentView = window.currentView || 'cortical';
-    
+
     let corticalMetric, subcorticalMetric;
 
     if (selectedMetric === 'volume') {
@@ -553,7 +553,7 @@ function buildNavrFilePaths(selectedMetric) {
  */
 async function loadNavrFiles(navrFiles) {
     logDebug('Attempting to load NAVR files', navrFiles);
-    
+
     const results = {
         corticalLoaded: false,
         subcorticalLoaded: false,
@@ -601,10 +601,10 @@ async function loadNavrFiles(navrFiles) {
  */
 function handleSuccessfulNavrLoad(loadResults) {
     navrDataLoaded = true;
-    
+
     const toggleBtn = getDataElement(DATA_CONFIG.SELECTORS.TOGGLE_THRESHOLD_BTN);
     const exportBtn = getDataElement(DATA_CONFIG.SELECTORS.EXPORT_DATA_BTN);
-    
+
     if (toggleBtn) toggleBtn.disabled = false;
     if (exportBtn) exportBtn.disabled = false;
 
@@ -646,9 +646,9 @@ function processCorticalNavrData(csvText) {
         header: true,
         dynamicTyping: true,
         skipEmptyLines: true,
-        complete: function(results) {
+        complete: function (results) {
             let processedCount = 0;
-            
+
             results.data.forEach(row => {
                 if (row.region && row.hemisphere && row.hasOwnProperty('NAVR_corrected')) {
                     const structure = `${row.hemisphere}_${row.region}`;
@@ -661,10 +661,10 @@ function processCorticalNavrData(csvText) {
                     processedCount++;
                 }
             });
-            
+
             logDebug(`Processed cortical NAVR data: ${processedCount} entries`);
         },
-        error: function(error) {
+        error: function (error) {
             console.error('[DATA] Error parsing cortical NAVR CSV:', error);
         }
     });
@@ -679,9 +679,9 @@ function processSubcorticalNavrData(csvText) {
         header: true,
         dynamicTyping: true,
         skipEmptyLines: true,
-        complete: function(results) {
+        complete: function (results) {
             let processedCount = 0;
-            
+
             results.data.forEach(row => {
                 if (row.region && row.hasOwnProperty('NAVR_corrected')) {
                     const structure = row.region;
@@ -694,10 +694,10 @@ function processSubcorticalNavrData(csvText) {
                     processedCount++;
                 }
             });
-            
+
             logDebug(`Processed subcortical NAVR data: ${processedCount} total entries`);
         },
-        error: function(error) {
+        error: function (error) {
             console.error('[DATA] Error parsing subcortical NAVR CSV:', error);
         }
     });
@@ -717,7 +717,7 @@ function toggleThresholding() {
     }
 
     const toggleBtn = getDataElement(DATA_CONFIG.SELECTORS.TOGGLE_THRESHOLD_BTN);
-    
+
     if (!isThresholded) {
         applyThresholding(toggleBtn);
     } else {
@@ -728,9 +728,9 @@ function toggleThresholding() {
     if (typeof updateMeshUserData === 'function') {
         updateMeshUserData();
     }
-    
+
     updateStatistics();
-    
+
     if (typeof updateBrainVisualization === 'function') {
         updateBrainVisualization();
     }
@@ -742,7 +742,7 @@ function toggleThresholding() {
  */
 function applyThresholding(toggleBtn) {
     logDebug('Applying NAVR thresholding');
-    
+
     let thresholdedCount = 0;
 
     Object.keys(currentData).forEach(structure => {
@@ -750,7 +750,7 @@ function applyThresholding(toggleBtn) {
         const navrInfo = navrData[structure];
 
         if (navrInfo && !isNaN(cohenD)) {
-            const threshold = Math.abs(navrInfo.navr_corrected);
+            const threshold = Math.abs((2 / Math.sqrt(navrInfo.population_size)) * navrInfo.navr);
             if (Math.abs(cohenD) < threshold) {
                 currentData[structure].cohen_d = NaN;
                 thresholdedCount++;
@@ -759,7 +759,7 @@ function applyThresholding(toggleBtn) {
     });
 
     isThresholded = true;
-    
+
     if (toggleBtn) {
         toggleBtn.textContent = 'Remove Threshold';
         toggleBtn.style.background = 'linear-gradient(45deg, #ff6b6b, #ff8e53)';
@@ -779,7 +779,7 @@ function applyThresholding(toggleBtn) {
  */
 function removeThresholding(toggleBtn) {
     logDebug('Removing NAVR thresholding');
-    
+
     // Restore original data
     Object.keys(originalData).forEach(structure => {
         if (currentData[structure] && originalData[structure]) {
@@ -788,7 +788,7 @@ function removeThresholding(toggleBtn) {
     });
 
     isThresholded = false;
-    
+
     if (toggleBtn) {
         toggleBtn.textContent = 'Apply Threshold';
         toggleBtn.style.background = 'linear-gradient(45deg, #4fc3f7, #29b6f6)';
@@ -818,7 +818,7 @@ function updateMeshUserData() {
             userData.cohen_d = currentData[userData.structure].cohen_d;
         }
     });
-    
+
     logDebug('Updated mesh userData with current Cohen\'s d values');
 }
 
@@ -873,19 +873,19 @@ function exportThresholdedData() {
         alert('No data to export. Please load a dataset first.');
         return;
     }
-    
+
     logDebug('Preparing data export');
-    
+
     try {
         const exportData = prepareExportData();
         const format = promptForExportFormat();
-        
+
         if (format === 'csv') {
             exportAsCSV(exportData);
         } else if (format === 'json') {
             exportAsJSON(exportData);
         }
-        
+
     } catch (error) {
         console.error('[DATA] Export error:', error);
         alert(`Error exporting data: ${error.message}`);
@@ -898,11 +898,11 @@ function exportThresholdedData() {
  */
 function prepareExportData() {
     const exportData = [];
-    
+
     Object.keys(currentData).forEach(structure => {
         const current = currentData[structure];
         const original = originalData[structure];
-        
+
         exportData.push({
             Structure: structure,
             Cohen_d_original: original ? original.cohen_d : null,
@@ -914,7 +914,7 @@ function prepareExportData() {
             Original_name: current.originalName || structure
         });
     });
-    
+
     logDebug(`Prepared ${exportData.length} structures for export`);
     return exportData;
 }
@@ -925,10 +925,10 @@ function prepareExportData() {
  */
 function promptForExportFormat() {
     const format = prompt(
-        'Choose export format:\\n1. CSV\\n2. JSON\\n\\nEnter "1" for CSV or "2" for JSON:', 
+        'Choose export format:\\n1. CSV\\n2. JSON\\n\\nEnter "1" for CSV or "2" for JSON:',
         '1'
     );
-    
+
     if (format === '1' || format === 'csv' || format === 'CSV') {
         return 'csv';
     } else if (format === '2' || format === 'json' || format === 'JSON') {
@@ -936,7 +936,7 @@ function promptForExportFormat() {
     } else if (format !== null) {
         alert('Invalid format selected. Please choose 1 for CSV or 2 for JSON.');
     }
-    
+
     return null;
 }
 
@@ -946,7 +946,7 @@ function promptForExportFormat() {
  */
 function exportAsCSV(data) {
     logDebug('Exporting data as CSV');
-    
+
     const headers = Object.keys(data[0]);
     const csvContent = [
         headers.join(','),
@@ -960,10 +960,10 @@ function exportAsCSV(data) {
             return value;
         }).join(','))
     ].join('\\n');
-    
+
     const filename = generateExportFilename('csv');
     downloadFile(csvContent, filename, 'text/csv;charset=utf-8;');
-    
+
     logDebug(`CSV export complete: ${filename}`);
 }
 
@@ -973,7 +973,7 @@ function exportAsCSV(data) {
  */
 function exportAsJSON(data) {
     logDebug('Exporting data as JSON');
-    
+
     const exportObject = {
         metadata: {
             export_date: new Date().toISOString(),
@@ -987,11 +987,11 @@ function exportAsJSON(data) {
         },
         data: data
     };
-    
+
     const jsonContent = JSON.stringify(exportObject, null, 2);
     const filename = generateExportFilename('json');
     downloadFile(jsonContent, filename, 'application/json;charset=utf-8;');
-    
+
     logDebug(`JSON export complete: ${filename}`);
 }
 
@@ -1016,15 +1016,15 @@ function downloadFile(content, filename, mimeType) {
     const blob = new Blob([content], { type: mimeType });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
-    
+
     link.setAttribute('href', url);
     link.setAttribute('download', filename);
     link.style.visibility = 'hidden';
-    
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     // Clean up the URL object
     URL.revokeObjectURL(url);
 }
@@ -1038,7 +1038,7 @@ function downloadFile(content, filename, mimeType) {
  */
 function initializeDataProcessing() {
     logDebug('Data processing module initialized');
-    
+
     // Set up file upload handler if element exists
     const csvFileInput = getDataElement('csvFile');
     if (csvFileInput) {
