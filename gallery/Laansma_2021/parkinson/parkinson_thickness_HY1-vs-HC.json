@@ -1,0 +1,11 @@
+{
+  "title": "International Multicenter Analysis of Brain Structure Across Clinical Stages of Parkinson's Disease",
+  "url": "https://doi.org/10.1002/mds.28706",
+  "authors": "Max A. Laansma et al.",
+  "year": "2021",
+  "disease": "Parkinson's Disease",
+  "subgroup": "HY1 vs HC",
+  "case-control": "Hoehn & Yahr stage 1 vs Healthy Controls",
+  "metric": "Cortical Thickness",
+  "value": "Cohen-d"
+}

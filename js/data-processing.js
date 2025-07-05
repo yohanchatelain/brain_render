@@ -257,16 +257,18 @@ function getHemisphere(structure) {
  * @returns {string} 'cortical' or 'subcortical'
  */
 function getStructureType(structure) {
-    if (!window.brainAtlases || !window.currentAtlas) {
+    if (!window.brainAtlases || !currentAtlas) {
         logDebug('Atlas definitions not available, defaulting to cortical');
         return 'cortical';
     }
 
-    const atlas = window.brainAtlases[window.currentAtlas];
+    const atlas = window.brainAtlases[currentAtlas];
     if (atlas && atlas.subcortical && atlas.subcortical.includes(structure)) {
+        logDebug(`Structure ${structure} classified as subcortical`);
         return 'subcortical';
     }
 
+    logDebug(`Structure ${structure} classified as cortical`);
     return 'cortical';
 }
 
@@ -339,7 +341,10 @@ function processCsvData(data) {
                 cohen_d: cohenD,
                 hemisphere: getHemisphere(normalizedStructure),
                 type: getStructureType(normalizedStructure),
-                originalName: originalStructure
+                originalName: originalStructure,
+                population_size: parseInt(row.population_size) || null,
+                n_patients: parseInt(row.n_patients) || null,
+                n_controls: parseInt(row.n_controls) || null
             };
 
             // Store in both current and original data
@@ -526,7 +531,7 @@ async function loadNavrData() {
  * @returns {Object} Object with cortical and subcortical file paths
  */
 function buildNavrFilePaths(selectedMetric) {
-    const currentAtlas = window.currentAtlas || 'desikan';
+    const atlasToUse = window.currentAtlas || currentAtlas || 'desikan';
     const currentView = window.currentView || 'cortical';
 
     let corticalMetric, subcorticalMetric;
@@ -541,8 +546,8 @@ function buildNavrFilePaths(selectedMetric) {
     }
 
     return {
-        cortical: `data/${currentAtlas}/navr_cortical_${corticalMetric}.csv`,
-        subcortical: `data/${currentAtlas}/navr_subcortical_${subcorticalMetric}.csv`
+        cortical: `data/${atlasToUse}/navr_cortical_${corticalMetric}.csv`,
+        subcortical: `data/${atlasToUse}/navr_subcortical_${subcorticalMetric}.csv`
     };
 }
 

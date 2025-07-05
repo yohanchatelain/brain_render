@@ -585,6 +585,17 @@ async function loadSelectedDataset() {
     }
 
     try {
+        // Store current atlas to restore later
+        const originalAtlas = currentAtlas;
+        
+        // Force Desikan atlas for Gallery datasets
+        currentAtlas = 'desikan';
+        window.currentAtlas = currentAtlas;
+        const atlasSelect = document.getElementById('atlasSelect');
+        if (atlasSelect) {
+            atlasSelect.value = 'desikan';
+        }
+        
         // Set view and metric before loading
         setViewAndMetricFromDataset(selectedDataset);
 
@@ -688,6 +699,14 @@ async function loadRandomExample() {
     }
     
     try {
+        // Force Desikan atlas for Gallery datasets
+        currentAtlas = 'desikan';
+        window.currentAtlas = currentAtlas;
+        const atlasSelect = document.getElementById('atlasSelect');
+        if (atlasSelect) {
+            atlasSelect.value = 'desikan';
+        }
+        
         // Collect all available datasets
         const allDatasets = [];
         Object.keys(galleryData).forEach(paper => {

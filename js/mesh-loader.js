@@ -105,6 +105,7 @@ async function loadSingleMesh(structure, type) {
                 // check if the file exists
                 const response = await fetch(path, { method: 'HEAD' });
                 if (!response.ok) {
+                    console.warn(`File not found: ${path}`);
                     continue;
                 }
                 const object = await loadMeshFile(path, format);
@@ -115,6 +116,7 @@ async function loadSingleMesh(structure, type) {
                     return object;
                 }
             } catch (error) {
+                console.warn(`Error loading mesh for ${structure} from ${path}:`, error);
                 continue;
             }
         }

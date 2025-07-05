@@ -24,7 +24,7 @@ def scan_gallery(directory):
         if match:
           rel_dir = os.path.relpath(root, GALLERY_DIR)
           rel_file = os.path.join(rel_dir, file) if rel_dir != '.' else file
-          desc_file = rel_file.replace('.csv', '.json').replace('csv/', 'desc/').replace('_thresholded', '')
+          desc_file = rel_file.replace('.csv', '.json').replace('_thresholded', '')
           entry = {
             "paper": rel_file.split(os.sep)[0],
             "file": Path(rel_file).as_posix(),

@@ -4,7 +4,7 @@ A sophisticated web-based 3D brain visualization tool for displaying Cohen's d e
 
 ## 🚀 Live Demo
 
-Visit the live demo at: `https://yourusername.github.io/brain-cohens-d-visualizer`
+Visit the live demo at: `https://yohanchatelain.github.io/brain_render`
 
 ## ✨ Core Features
 
@@ -40,16 +40,16 @@ Visit the live demo at: `https://yourusername.github.io/brain-cohens-d-visualize
 
 ### CSV Input Format
 
-Your CSV file should contain structure names and Cohen's d values:
+Your CSV file should contain structure names, Cohen's d values and population size:
 
 ```csv
-Structure,Cohen_d
-lh_bankssts,1.5
-rh_bankssts,-0.8
-Left-Hippocampus,-1.8
-Right-Hippocampus,-1.5
-L_superiorfrontal,2.1
-Laccumb,-0.3
+Structure,Cohen_d,population_size
+lh_bankssts,1.5,100
+rh_bankssts,-0.8,100
+Left-Hippocampus,-1.8,100
+Right-Hippocampus,-1.5,100
+L_superiorfrontal,2.1,100
+Laccumb,-0.3,100
 ```
 
 ### Supported Column Names
@@ -104,7 +104,7 @@ The application automatically normalizes structure names from various convention
 1. **Fork this repository** or create a new one
 2. **Upload the complete project**:
    ```
-   your-repository/
+   brain_render/
    ├── index.html
    ├── style.css
    ├── js/
@@ -128,7 +128,7 @@ The application automatically normalizes structure names from various convention
    - Go to Settings → Pages
    - Select "Deploy from a branch"
    - Choose "main" branch, "/ (root)" folder
-4. **Access your site** at `https://yourusername.github.io/repository-name`
+4. **Access your site** at `https://yourusername.github.io/brain_render`
 
 ### Method 2: Local Development
 

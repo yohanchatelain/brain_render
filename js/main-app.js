@@ -173,6 +173,7 @@ function handleAtlasChange() {
     const newAtlas = document.getElementById('atlasSelect').value;
     if (newAtlas !== currentAtlas) {
         currentAtlas = newAtlas;
+        window.currentAtlas = currentAtlas;
         console.log('Atlas changed to:', currentAtlas);
 
         // Reset NAVR data when atlas changes

@@ -57,3 +57,6 @@ const brainAtlases = {
         ]
     }
 };
+
+// Expose to window object for global access
+window.brainAtlases = brainAtlases;

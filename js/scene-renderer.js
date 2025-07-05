@@ -5,6 +5,7 @@ let colorMapping = { min: -2.0, max: 2.0 };
 let isWireframe = false;
 let currentView = 'cortical';
 let currentAtlas = 'desikan';
+window.currentAtlas = currentAtlas;
 let showThresholdedRegions = false;
 let thresholdedColor = { r: 0.2, g: 0.2, b: 0.2 }; // Default dark gray
 let sceneBackgroundColor = 0x1a1a2e; // Default dark blue
@@ -153,6 +154,23 @@ function showStructureInfo(userData) {
         cohenDDisplay = '<span style="color: #888;">No data</span>';
     }
 
+    // Get population size information
+    const structureData = currentData[userData.structure] || originalData[userData.structure];
+    const navrPopulation = navrData[userData.structure]?.population_size;
+    
+    let populationDisplay = '';
+    if (structureData?.population_size || navrPopulation) {
+        const popSize = structureData?.population_size || navrPopulation;
+        populationDisplay = `<p style="margin: 2px 0;"><strong>Population size:</strong> ${popSize}</p>`;
+        
+        // Add breakdown if available
+        if (structureData?.n_patients && structureData?.n_controls) {
+            populationDisplay += `<p style="margin: 2px 0; font-size: 0.9em; color: #888;">
+                Patients: ${structureData.n_patients}, Controls: ${structureData.n_controls}
+            </p>`;
+        }
+    }
+
     structureInfo.innerHTML = `
         <div style="padding: 10px; background: rgba(0,0,0,0.1); border-radius: 5px;">
             <h4 style="margin: 0 0 8px 0; color: #4fc3f7;">${userData.structure}</h4>
@@ -160,6 +178,7 @@ function showStructureInfo(userData) {
             <p style="margin: 2px 0;"><strong>Hemisphere:</strong> ${userData.hemisphere}</p>
             <p style="margin: 2px 0;"><strong>Cohen's d:</strong> ${cohenDDisplay}</p>
             ${isCurrentValid ? `<p style="margin: 2px 0;"><strong>Effect size:</strong> ${getEffectSizeLabel(Math.abs(currentCohenD))}</p>` : ''}
+            ${populationDisplay}
         </div>
     `;
 }
